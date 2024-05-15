@@ -1,0 +1,87 @@
+{
+ "type": "NodeTypeFile",
+ "source": "recursive",
+ "end_rune": 306,
+ "children": [
+  {
+   "type": "NodeTypeDefinition",
+   "source": "recursive",
+   "end_rune": 286,
+   "children": [
+    {
+     "type": "NodeTypeRelation",
+     "source": "recursive",
+     "start_rune": 21,
+     "end_rune": 43,
+     "name": "parent",
+     "allowed_types": [
+      {
+       "type": "NodeTypeTypeReference",
+       "source": "recursive",
+       "start_rune": 38,
+       "end_rune": 43,
+       "type_ref_types": [
+        {
+         "type": "NodeTypeSpecificTypeReference",
+         "source": "recursive",
+         "start_rune": 38,
+         "end_rune": 43,
+         "type_name": "folder"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "NodeTypeRelation",
+     "source": "recursive",
+     "start_rune": 46,
+     "end_rune": 66,
+     "name": "reader",
+     "allowed_types": [
+      {
+       "type": "NodeTypeTypeReference",
+       "source": "recursive",
+       "start_rune": 63,
+       "end_rune": 66,
+       "type_ref_types": [
+        {
+         "type": "NodeTypeSpecificTypeReference",
+         "source": "recursive",
+         "start_rune": 63,
+         "end_rune": 66,
+         "type_name": "user"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "NodeTypePermission",
+     "source": "recursive",
+     "start_rune": 246,
+     "end_rune": 284,
+     "children": [
+      {
+       "type": "NodeTypeComment",
+       "comment": "// Note that since `parent` refers to `folder` (which is this type), `parent-\u003eread` will call"
+      },
+      {
+       "type": "NodeTypeComment",
+       "comment": "// this same permission, therefore following `read` for *that folder's* parent."
+      }
+     ],
+     "name": "read"
+    }
+   ],
+   "name": "folder"
+  },
+  {
+   "type": "NodeTypeDefinition",
+   "source": "recursive",
+   "start_rune": 289,
+   "end_rune": 306,
+   "name": "user"
+  }
+ ]
+}

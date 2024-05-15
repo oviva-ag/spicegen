@@ -1,0 +1,20 @@
+definition user {}
+
+definition portfolio {
+	relation reader: user
+	permission read = reader
+}
+
+definition folder {
+	relation parent_portfolio: portfolio
+	relation reader: user
+	permission read = reader + parent_portfolio->read
+}
+
+definition document {
+	relation parent_folder: folder
+	relation reader: user
+
+	/** read defines whether a user can read the document */
+	permission read = reader + parent_folder->read
+}

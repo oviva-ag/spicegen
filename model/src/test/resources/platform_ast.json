@@ -1,0 +1,140 @@
+{
+ "type": "NodeTypeFile",
+ "source": "platform",
+ "end_rune": 315,
+ "children": [
+  {
+   "type": "NodeTypeDefinition",
+   "source": "platform",
+   "end_rune": 92,
+   "children": [
+    {
+     "type": "NodeTypeRelation",
+     "source": "platform",
+     "start_rune": 23,
+     "end_rune": 50,
+     "name": "administrator",
+     "allowed_types": [
+      {
+       "type": "NodeTypeTypeReference",
+       "source": "platform",
+       "start_rune": 47,
+       "end_rune": 50,
+       "type_ref_types": [
+        {
+         "type": "NodeTypeSpecificTypeReference",
+         "source": "platform",
+         "start_rune": 47,
+         "end_rune": 50,
+         "type_name": "user"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "NodeTypePermission",
+     "source": "platform",
+     "start_rune": 53,
+     "end_rune": 90,
+     "name": "super_admin"
+    }
+   ],
+   "name": "platform"
+  },
+  {
+   "type": "NodeTypeDefinition",
+   "source": "platform",
+   "start_rune": 95,
+   "end_rune": 192,
+   "children": [
+    {
+     "type": "NodeTypeRelation",
+     "source": "platform",
+     "start_rune": 122,
+     "end_rune": 148,
+     "name": "platform",
+     "allowed_types": [
+      {
+       "type": "NodeTypeTypeReference",
+       "source": "platform",
+       "start_rune": 141,
+       "end_rune": 148,
+       "type_ref_types": [
+        {
+         "type": "NodeTypeSpecificTypeReference",
+         "source": "platform",
+         "start_rune": 141,
+         "end_rune": 148,
+         "type_name": "platform"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "NodeTypePermission",
+     "source": "platform",
+     "start_rune": 151,
+     "end_rune": 190,
+     "name": "admin"
+    }
+   ],
+   "name": "organization"
+  },
+  {
+   "type": "NodeTypeDefinition",
+   "source": "platform",
+   "start_rune": 195,
+   "end_rune": 295,
+   "children": [
+    {
+     "type": "NodeTypeRelation",
+     "source": "platform",
+     "start_rune": 218,
+     "end_rune": 252,
+     "name": "owner",
+     "allowed_types": [
+      {
+       "type": "NodeTypeTypeReference",
+       "source": "platform",
+       "start_rune": 234,
+       "end_rune": 252,
+       "type_ref_types": [
+        {
+         "type": "NodeTypeSpecificTypeReference",
+         "source": "platform",
+         "start_rune": 234,
+         "end_rune": 237,
+         "type_name": "user"
+        },
+        {
+         "type": "NodeTypeSpecificTypeReference",
+         "source": "platform",
+         "start_rune": 241,
+         "end_rune": 252,
+         "type_name": "organization"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "type": "NodeTypePermission",
+     "source": "platform",
+     "start_rune": 255,
+     "end_rune": 293,
+     "name": "admin"
+    }
+   ],
+   "name": "resource"
+  },
+  {
+   "type": "NodeTypeDefinition",
+   "source": "platform",
+   "start_rune": 298,
+   "end_rune": 315,
+   "name": "user"
+  }
+ ]
+}

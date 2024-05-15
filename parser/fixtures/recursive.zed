@@ -1,0 +1,10 @@
+definition folder {
+	relation parent: folder
+	relation reader: user
+
+	// Note that since `parent` refers to `folder` (which is this type), `parent->read` will call
+	// this same permission, therefore following `read` for *that folder's* parent.
+	permission read = reader + parent->read
+}
+
+definition user {}
