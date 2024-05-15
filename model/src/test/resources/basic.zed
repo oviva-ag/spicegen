@@ -1,0 +1,12 @@
+definition user {}
+
+/**
+ * resource is an example resource.
+ */
+definition resource {
+    relation writer: user
+    relation viewer: user
+
+    permission write = writer
+    permission view = viewer + writer
+}
