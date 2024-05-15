@@ -1,3 +1,5 @@
 .idea/
 *.iml
 target/
+.java-version
+generator/gen

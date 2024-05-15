@@ -1,7 +1,6 @@
 package com.oviva.spicegen.parser.schema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
 
 public final class PermissionNode extends AbstractNode implements Node {
   @JsonProperty("name")
@@ -13,10 +12,14 @@ public final class PermissionNode extends AbstractNode implements Node {
 
   @Override
   public String toString() {
-    return "PermissionNode{" +
-            "name='" + name + '\'' +
-            ", nodeType=" + nodeType +
-            ", children=" + children +
-            '}';
+    return "PermissionNode{"
+        + "name='"
+        + name
+        + '\''
+        + ", nodeType="
+        + nodeType
+        + ", children="
+        + children
+        + '}';
   }
 }
