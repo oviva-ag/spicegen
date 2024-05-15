@@ -8,7 +8,6 @@ import (
 )
 
 func TestParseBasic(t *testing.T) {
-
 	f, err := os.Open("./basic.zed")
 	if err != nil {
 		t.Fatal(err)
@@ -22,14 +21,12 @@ func TestParseBasic(t *testing.T) {
 }
 
 func TestFixtures(t *testing.T) {
-
 	cases := []string{
 		"files", "groups", "platform", "recursive", "synthetic", "oviva",
 	}
 
 	for _, tc := range cases {
 		t.Run(tc, func(t *testing.T) {
-
 			f, err := os.Open(fmt.Sprintf("./fixtures/%s.zed", tc))
 			if err != nil {
 				t.Fatal(err)
@@ -40,7 +37,7 @@ func TestFixtures(t *testing.T) {
 
 			j, _ := json.MarshalIndent(root, "", " ")
 
-			err = os.WriteFile(fmt.Sprintf("./fixtures/%s_ast.json", tc), j, 0644)
+			err = os.WriteFile(fmt.Sprintf("./fixtures/%s_ast.json", tc), j, 0o644)
 			if err != nil {
 				t.Fatal(err)
 			}

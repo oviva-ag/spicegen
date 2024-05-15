@@ -3,10 +3,11 @@ package main
 import (
 	"container/list"
 	"fmt"
-	"github.com/authzed/spicedb/pkg/schemadsl/dslshape"
-	"github.com/authzed/spicedb/pkg/schemadsl/parser"
 	"sort"
 	"strings"
+
+	"github.com/authzed/spicedb/pkg/schemadsl/dslshape"
+	"github.com/authzed/spicedb/pkg/schemadsl/parser"
 )
 
 type astNode struct {

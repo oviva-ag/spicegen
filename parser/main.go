@@ -4,17 +4,17 @@ import (
 	"container/list"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"os"
+
 	"github.com/authzed/spicedb/pkg/schemadsl/dslshape"
 	"github.com/authzed/spicedb/pkg/schemadsl/input"
 	"github.com/authzed/spicedb/pkg/schemadsl/parser"
 	"github.com/davecgh/go-spew/spew"
-	"io"
-	"log"
-	"os"
 )
 
 func main() {
-
 	var schemaPath string
 
 	schemaPath = "./basic.zed"
@@ -38,7 +38,6 @@ func main() {
 }
 
 func Parse(sourceName string, r io.Reader) (Node, error) {
-
 	b, err := io.ReadAll(r)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read schema %s", sourceName)

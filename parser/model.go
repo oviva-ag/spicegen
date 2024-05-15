@@ -127,8 +127,8 @@ func parse(root *astNode) Node {
 		return bn
 	}
 }
-func parseDefinitionNode(root *astNode) Node {
 
+func parseDefinitionNode(root *astNode) Node {
 	node := &DefinitionNode{
 		Name: root.properties[dslshape.NodeDefinitionPredicateName].(string),
 	}
@@ -139,7 +139,6 @@ func parseDefinitionNode(root *astNode) Node {
 }
 
 func parseCommentNode(root *astNode) Node {
-
 	node := &CommentNode{
 		Comment: root.properties[dslshape.NodeCommentPredicateValue].(string),
 	}
@@ -150,7 +149,6 @@ func parseCommentNode(root *astNode) Node {
 }
 
 func parseRelationNode(root *astNode) Node {
-
 	fromAllowedTypes := root.children[dslshape.NodeRelationPredicateAllowedTypes]
 	mappedAllowedTypes := make([]*TypeRefNode, fromAllowedTypes.Len())
 	i := 0
@@ -170,7 +168,6 @@ func parseRelationNode(root *astNode) Node {
 }
 
 func parseTypeRefNode(root *astNode) *TypeRefNode {
-
 	fromTypeRefType := root.children[dslshape.NodeTypeReferencePredicateType]
 	mappedChildren := make([]*SpecificTypeRefNode, fromTypeRefType.Len())
 	j := 0
@@ -199,11 +196,11 @@ func parseSpecificTypeRefTypeNode(root *astNode) *SpecificTypeRefNode {
 	populateBaseNode(&n.BaseNode, root)
 	return n
 }
-func parsePermissionNode(root *astNode) Node {
 
+func parsePermissionNode(root *astNode) Node {
 	node := &PermissionNode{
 		Name: root.properties[dslshape.NodePredicateName].(string),
-		//TODO: add expression
+		// TODO: add expression
 	}
 
 	populateBaseNode(&node.BaseNode, root)
