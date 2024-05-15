@@ -8,6 +8,7 @@ import com.oviva.spicegen.model.Relation;
 import com.oviva.spicegen.model.Schema;
 import com.squareup.javapoet.*;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 import javax.lang.model.element.Modifier;
@@ -19,7 +20,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
   //    this.options = options;
   //  }
 
-  private static final String sourceDirectory = "./gen";
+  private static final String sourceDirectory = "./out/src/main/java";
   private static final String sourcePackageName = "com.oviva.spicegen";
 
   private TypeSpecStore typeSpecStore;
@@ -190,6 +191,9 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
     var packageName = sourcePackageName + subpackage;
     try {
       var path = Path.of(outputDirectory);
+
+      Files.createDirectories(path);
+
       JavaFile.builder(packageName, typeSpec).build().writeTo(path);
     } catch (IOException e) {
       throw new IllegalStateException("cannot write sources to: " + outputDirectory, e);

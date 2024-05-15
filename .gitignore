@@ -2,4 +2,5 @@
 *.iml
 target/
 .java-version
-generator/gen
+generator/gen/
+generator/out/src
