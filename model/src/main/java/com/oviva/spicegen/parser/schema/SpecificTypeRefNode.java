@@ -3,7 +3,7 @@ package com.oviva.spicegen.parser.schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
-public class SpecificTypeRefNode extends BaseNode {
+public final class SpecificTypeRefNode extends AbstractNode implements Node {
 
   @JsonProperty("type_name")
   private String typeName;

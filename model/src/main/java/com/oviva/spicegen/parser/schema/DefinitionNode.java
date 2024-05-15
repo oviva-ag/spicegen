@@ -2,7 +2,7 @@ package com.oviva.spicegen.parser.schema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DefinitionNode extends BaseNode {
+public final class DefinitionNode extends AbstractNode implements Node {
   @JsonProperty("name")
   private String name;
 

@@ -2,16 +2,15 @@ package com.oviva.spicegen.parser;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oviva.spicegen.model.ObjectDefinition;
-import com.oviva.spicegen.model.Schema;
-import com.oviva.spicegen.parser.schema.BaseNode;
-import com.oviva.spicegen.parser.schema.DefinitionNode;
-import com.oviva.spicegen.parser.schema.Node;
-import com.oviva.spicegen.parser.schema.NodeType;
+import com.oviva.spicegen.model.*;
+import com.oviva.spicegen.parser.schema.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class SpiceDbSchemaParser {
 
@@ -25,17 +24,61 @@ public class SpiceDbSchemaParser {
       }
 
       var definitions =
-          ((BaseNode) root)
-              .children().stream()
-                  .filter(n -> n.kind() == NodeType.NodeTypeDefinition)
-                  .map(d -> (DefinitionNode) d)
-                  .map(o -> new ObjectDefinition(o.name(), List.of(), List.of()))
-                  .toList();
+          streamNullable(root.unwrap(BaseNode.class).children())
+              .filter(byKind(NodeType.NodeTypeDefinition))
+              .map(d -> d.unwrap(DefinitionNode.class))
+              .map(this::mapDefinition)
+              .toList();
 
       return new Schema(definitions);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private ObjectDefinition mapDefinition(DefinitionNode n) {
+    var relations =
+        streamNullable(n.children())
+            .filter(byKind(NodeType.NodeTypeRelation))
+            .map(node -> node.unwrap(RelationNode.class))
+            .map(this::mapRelation)
+            .toList();
+
+    var permissions =
+        streamNullable(n.children())
+            .filter(byKind(NodeType.NodeTypePermission))
+            .map(node -> node.unwrap(PermissionNode.class))
+            .map(this::mapPermission)
+            .toList();
+
+    return new ObjectDefinition(n.name(), relations, permissions);
+  }
+
+  private Permission mapPermission(PermissionNode n) {
+    return new Permission(n.name());
+  }
+
+  private Relation mapRelation(RelationNode n) {
+
+    var allowedTypes =
+        streamNullable(n.allowedTypes())
+            .filter(byKind(NodeType.NodeTypeTypeReference))
+            .map(node -> node.unwrap(TypeRefNode.class))
+            .flatMap(t -> t.typeRefTypes().stream())
+            .filter(byKind(NodeType.NodeTypeSpecificTypeReference))
+            .map(node -> (SpecificTypeRefNode) node)
+            .map(node -> new ObjectTypeRef(node.typeName(), node.relationName()))
+            .toList();
+
+    return new Relation(n.name(), allowedTypes);
+  }
+
+  private static Predicate<Node> byKind(NodeType kind) {
+    return n -> n.kind() == kind;
+  }
+
+  private static <T> Stream<T> streamNullable(Collection<T> t) {
+    return Optional.ofNullable(t).stream().flatMap(Collection::stream);
   }
 
   private Node tryParseAst(InputStream is) throws IOException {
