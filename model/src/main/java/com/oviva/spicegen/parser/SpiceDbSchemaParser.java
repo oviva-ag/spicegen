@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oviva.spicegen.model.*;
 import com.oviva.spicegen.parser.schema.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;

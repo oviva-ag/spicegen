@@ -17,7 +17,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
   @JsonSubTypes.Type(value = PermissionNode.class, name = "NodeTypePermission"),
   @JsonSubTypes.Type(value = SpecificTypeRefNode.class, name = "NodeTypeSpecificTypeReference")
 })
-public sealed interface Node permits BaseNode, DefinitionNode, PermissionNode, RelationNode, SpecificTypeRefNode, TypeRefNode {
+public sealed interface Node
+    permits BaseNode,
+        DefinitionNode,
+        PermissionNode,
+        RelationNode,
+        SpecificTypeRefNode,
+        TypeRefNode {
   NodeType kind();
 
   default <T extends Node> T unwrap(Class<T> clazz) {

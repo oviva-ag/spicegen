@@ -81,7 +81,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
     }
 
     var constantsClass = constants.build();
-    if (typeSpecStore.has(constantsClass.name)){
+    if (typeSpecStore.has(constantsClass.name)) {
       return;
     }
     typeSpecStore.put(constantsClass);
@@ -125,8 +125,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
               .addModifiers(Modifier.PUBLIC)
               .addField(
                   FieldSpec.builder(String.class, "kind", Modifier.PRIVATE, Modifier.STATIC)
-                      .initializer(
-                          "\""+definition.name()+"\"")
+                      .initializer("\"" + definition.name() + "\"")
                       .build())
               .addField(String.class, "id", Modifier.PRIVATE)
               .addMethod(

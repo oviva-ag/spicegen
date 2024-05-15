@@ -1,7 +1,6 @@
 package com.oviva.spicegen.parser.schema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public final class RelationNode extends AbstractNode implements Node {
@@ -21,11 +20,16 @@ public final class RelationNode extends AbstractNode implements Node {
 
   @Override
   public String toString() {
-    return "RelationNode{" +
-            "name='" + name + '\'' +
-            ", allowedTypes=" + allowedTypes +
-            ", nodeType=" + nodeType +
-            ", children=" + children +
-            '}';
+    return "RelationNode{"
+        + "name='"
+        + name
+        + '\''
+        + ", allowedTypes="
+        + allowedTypes
+        + ", nodeType="
+        + nodeType
+        + ", children="
+        + children
+        + '}';
   }
 }

@@ -13,10 +13,13 @@ public final class TypeRefNode extends AbstractNode implements Node {
 
   @Override
   public String toString() {
-    return "TypeRefNode{" +
-            "typeRefTypes=" + typeRefTypes +
-            ", nodeType=" + nodeType +
-            ", children=" + children +
-            '}';
+    return "TypeRefNode{"
+        + "typeRefTypes="
+        + typeRefTypes
+        + ", nodeType="
+        + nodeType
+        + ", children="
+        + children
+        + '}';
   }
 }

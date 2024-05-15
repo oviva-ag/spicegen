@@ -5,26 +5,18 @@ import com.oviva.spicegen.model.ObjectTypeRef;
 import com.oviva.spicegen.model.Relation;
 import com.oviva.spicegen.model.Schema;
 import com.oviva.spicegen.parser.SpiceDbSchemaParser;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.File;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 
 class SpiceDbClientGeneratorImplTest {
 
   @ParameterizedTest
   @ValueSource(
-          strings = {
-//                  "files",
-                  "oviva",
-          })
+      strings = {
+        //                  "files",
+        "oviva",
+      })
   void test() {
 
     var generator = new SpiceDbClientGeneratorImpl();
