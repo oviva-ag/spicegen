@@ -79,7 +79,12 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
       }
     }
 
-    writeSource(constants.build(), "");
+    var constantsClass = constants.build();
+    if (typeSpecStore.has(constantsClass.name)){
+      return;
+    }
+    typeSpecStore.put(constantsClass);
+    writeSource(constantsClass, "");
   }
 
   private void generateRefs(Schema spec) {
@@ -120,7 +125,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
               .addField(
                   FieldSpec.builder(String.class, "kind", Modifier.PRIVATE, Modifier.STATIC)
                       .initializer(
-                          "SchemaConstants." + "NAMESPACE_" + definition.name().toUpperCase())
+                          "\""+definition.name()+"\"")
                       .build())
               .addField(String.class, "id", Modifier.PRIVATE)
               .addMethod(
