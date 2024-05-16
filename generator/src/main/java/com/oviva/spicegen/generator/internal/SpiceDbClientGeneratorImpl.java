@@ -2,9 +2,9 @@ package com.oviva.spicegen.generator.internal;
 
 import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
 
-import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.UpdateRelationship;
+import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.generator.SpiceDbClientGenerator;
 import com.oviva.spicegen.generator.utils.TextUtils;
 import com.oviva.spicegen.model.*;
@@ -30,7 +30,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
   private final Options options;
 
-  public SpiceDbClientGeneratorImpl(Options options){
+  public SpiceDbClientGeneratorImpl(Options options) {
     this.options = options;
   }
 

@@ -16,6 +16,7 @@ package com.oviva.spicegen.maven;
  * limitations under the License.
  */
 
+import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.generator.internal.SpiceDbClientGeneratorImpl;
 import com.oviva.spicegen.parser.SpiceDbSchemaParser;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class SpicegenMojo extends AbstractMojo {
     log.info("reading schema from '" + schemaPath + "'");
     var specInputStream = readSchema();
 
-    var generator = new SpiceDbClientGeneratorImpl();
+    var generator = new SpiceDbClientGeneratorImpl(new Options(outputDirectory, packageName));
     var parser = new SpiceDbSchemaParser();
 
     log.info("parsing schema");
