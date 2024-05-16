@@ -9,6 +9,7 @@ import com.squareup.javapoet.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.UUID;
 import javax.lang.model.element.Modifier;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
   public void generate(Schema spec) {
     typeSpecStore = new TypeSpecStore();
     generateConstants(spec);
+    generateUpdateRelationshipClass();
     generateRefs(spec);
   }
 
@@ -295,6 +297,204 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
     writeSource(subjectRef, ".refs");
     return subjectRef;
+  }
+
+  private void generateUpdateRelationshipClass() {
+
+    var operationTypeSpec =
+        TypeSpec.enumBuilder("Operation")
+            .addModifiers(Modifier.PUBLIC)
+            .addEnumConstant("UPDATE")
+            .addEnumConstant("DELETE")
+            .build();
+
+    var objectRefType = ClassName.bestGuess("ObjectRef");
+    var subjectRefType = ClassName.bestGuess("SubjectRef");
+    var operationType = ClassName.bestGuess(operationTypeSpec.name);
+
+    var objectRefSubjectTypeSpec =
+        TypeSpec.classBuilder("ObjectRefSubject")
+            .addSuperinterface(subjectRefType)
+            .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+            .addField(objectRefType, "subject", Modifier.PRIVATE, Modifier.FINAL)
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PRIVATE)
+                    .addParameter(objectRefType, "subject")
+                    .addCode(
+                        """
+                    this.subject = subject;
+                    """)
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("kind")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addCode("return subject.kind();")
+                    .returns(String.class)
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("id")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addCode("return subject.id();")
+                    .returns(String.class)
+                    .build())
+            .build();
+    var objectRefSubjectType = ClassName.bestGuess("ObjectRefSubject");
+
+    var self = TypeSpec.classBuilder(ClassName.bestGuess("UpdateRelationship")).build();
+    var updateRelationshipTypeSpec =
+        self.toBuilder()
+            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            // fields
+            .addField(objectRefType, "resource", Modifier.PRIVATE, Modifier.FINAL)
+            .addField(ClassName.get(String.class), "relation", Modifier.PRIVATE, Modifier.FINAL)
+            .addField(subjectRefType, "subject", Modifier.PRIVATE, Modifier.FINAL)
+            .addField(operationType, "operation", Modifier.PRIVATE, Modifier.FINAL)
+
+            // constructor
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PRIVATE)
+                    .addParameter(objectRefType, "resource")
+                    .addParameter(ClassName.get(String.class), "relation")
+                    .addParameter(subjectRefType, "subject")
+                    .addParameter(operationType, "operation")
+                    .addCode(
+                        """
+                         this.resource = resource;
+                         this.relation = relation;
+                         this.subject = subject;
+                         this.operation = operation;
+                     """)
+                    .build())
+
+            // factory methods
+            .addMethod(
+                MethodSpec.methodBuilder("ofUpdate")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addParameter(objectRefType, "resource")
+                    .addParameter(ClassName.get(String.class), "relation")
+                    .addParameter(objectRefType, "subject")
+                    .addCode(
+                        """
+                      return new UpdateRelationship(resource, relation, new $T(subject), $T.UPDATE);
+                      """,
+                        objectRefSubjectType,
+                        operationType)
+                    .returns(ClassName.bestGuess(self.name))
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("ofDelete")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addParameter(objectRefType, "resource")
+                    .addParameter(ClassName.get(String.class), "relation")
+                    .addParameter(objectRefType, "subject")
+                    .addCode(
+                        """
+                        return new UpdateRelationship(resource, relation, new $T(subject), $T.DELETE);
+                        """,
+                        objectRefSubjectType,
+                        operationType)
+                    .returns(ClassName.bestGuess(self.name))
+                    .build())
+            // getters
+            .addMethod(
+                MethodSpec.methodBuilder("subject")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addCode(
+                        """
+                        return subject;
+                        """)
+                    .returns(subjectRefType)
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("resource")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addCode(
+                        """
+                        return resource;
+                        """)
+                    .returns(objectRefType)
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("relation")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addCode(
+                        """
+                        return relation;
+                        """)
+                    .returns(ClassName.get(String.class))
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("operation")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addCode(
+                        """
+                        return operation;
+                        """)
+                    .returns(operationType)
+                    .build())
+
+            // toString
+            .addMethod(
+                MethodSpec.methodBuilder("toString")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(Override.class)
+                    .addCode(
+                        """
+                    var res = resource != null ? resource.toString() : "";
+                    var rel = relation != null ? relation : "";
+                    var sub = subject != null ? subject.toString() : "";
+                    return operation.name() + "(" + res + "#" + rel + "@" + sub + ")";
+                    """)
+                    .returns(ClassName.get(String.class))
+                    .build())
+
+            // equals & hashCode
+            .addMethod(
+                MethodSpec.methodBuilder("equals")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(Override.class)
+                    .addParameter(ClassName.get(Object.class), "o")
+                    .addCode(
+                        """
+                    if (this == o) {
+                      return true;
+                    }
+                    if (o == null || getClass() != o.getClass()) {
+                      return false;
+                    }
+                    var that = (UpdateRelationship) o;
+                    return $T.equals(resource, that.resource)
+                        && $T.equals(relation, that.relation)
+                        && $T.equals(subject, that.subject)
+                        && operation == that.operation;
+                    """,
+                        ClassName.get(Objects.class),
+                        ClassName.get(Objects.class),
+                        ClassName.get(Objects.class))
+                    .returns(TypeName.BOOLEAN)
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("hashCode")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(Override.class)
+                    .addCode(
+                        """
+                      return $T.hash(resource, relation, subject, operation);
+                      """,
+                        ClassName.get(Objects.class))
+                    .returns(TypeName.INT)
+                    .build())
+
+            // inner types
+            .addType(operationTypeSpec)
+            .addType(objectRefSubjectTypeSpec)
+            .build();
+
+    writeSource(updateRelationshipTypeSpec, ".refs");
   }
 
   private void writeSource(TypeSpec typeSpec, String subpackage) {
