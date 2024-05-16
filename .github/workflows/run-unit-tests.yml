@@ -1,0 +1,24 @@
+name: run unit tests
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    paths-ignore:
+      - '.github/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Run unit tests
+        run: |
+          mvn test
