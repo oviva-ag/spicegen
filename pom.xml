@@ -24,6 +24,7 @@
 
     <modules>
         <module>api</module>
+        <module>generator-maven-plugin</module>
         <module>generator</module>
         <module>model</module>
     </modules>
