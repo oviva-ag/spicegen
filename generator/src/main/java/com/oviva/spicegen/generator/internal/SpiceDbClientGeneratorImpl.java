@@ -12,7 +12,6 @@ import com.squareup.javapoet.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.UUID;
 import javax.lang.model.element.Modifier;
 import org.slf4j.Logger;
@@ -117,9 +116,9 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
               .addField(
                   FieldSpec.builder(
                           String.class, "kind", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                      .initializer("\"" + definition.name() + "\"")
+                      .initializer("$S", definition.name())
                       .build())
-              .addField(String.class, "id", Modifier.PRIVATE)
+              .addField(String.class, "id", Modifier.PRIVATE, Modifier.FINAL)
               .addMethod(
                   MethodSpec.constructorBuilder()
                       .addModifiers(Modifier.PRIVATE)
