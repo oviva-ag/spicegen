@@ -25,6 +25,7 @@
     <modules>
         <module>generator</module>
         <module>model</module>
+        <module>permissions-api</module>
     </modules>
 
     <properties>

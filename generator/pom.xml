@@ -59,6 +59,12 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>com.authzed.api</groupId>
+      <artifactId>authzed</artifactId>
+      <version>0.7.0</version>
+    </dependency>
+  </dependencies>
+
 
 </project>

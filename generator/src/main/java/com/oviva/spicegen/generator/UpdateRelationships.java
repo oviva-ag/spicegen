@@ -15,7 +15,7 @@ public final class UpdateRelationships {
     this.updates = List.copyOf(updates);
   }
 
-//  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP")
+  //  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP")
   public List<UpdateRelationship> updates() {
     return updates;
   }
@@ -29,12 +29,12 @@ public final class UpdateRelationships {
       return new UpdateRelationshipsBuilder();
     }
 
-    public UpdateRelationshipsBuilder withUpdates(List<UpdateRelationship> updates) {
+    public UpdateRelationshipsBuilder updates(List<UpdateRelationship> updates) {
       this.updates = updates;
       return this;
     }
 
-    public UpdateRelationshipsBuilder addUpdate(UpdateRelationship updates) {
+    public UpdateRelationshipsBuilder update(UpdateRelationship updates) {
       this.updates.add(updates);
       return this;
     }

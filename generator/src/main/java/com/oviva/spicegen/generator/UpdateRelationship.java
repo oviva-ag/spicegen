@@ -20,6 +20,11 @@ public final class UpdateRelationship {
     return new UpdateRelationship(resource, relation, subject, Operation.DELETE);
   }
 
+  public static UpdateRelationship of(
+          ObjectRef resource, String relation, SubjectRef subject, Operation operation) {
+    return new UpdateRelationship(resource, relation, subject, operation);
+  }
+
   private UpdateRelationship(
       ObjectRef resource, String relation, SubjectRef subject, Operation operation) {
     this.resource = resource;
