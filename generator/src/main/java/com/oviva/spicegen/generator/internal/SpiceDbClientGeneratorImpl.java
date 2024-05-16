@@ -108,15 +108,14 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
               .addSuperinterface(ClassName.bestGuess("ObjectRef"))
               .addModifiers(Modifier.PUBLIC)
               .addField(
-                  FieldSpec.builder(String.class, "kind", Modifier.PRIVATE, Modifier.STATIC)
+                  FieldSpec.builder(
+                          String.class, "kind", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                       .initializer("\"" + definition.name() + "\"")
                       .build())
               .addField(String.class, "id", Modifier.PRIVATE)
               .addMethod(
                   MethodSpec.constructorBuilder()
-                      .addParameter(String.class, "kind")
                       .addParameter(String.class, "id")
-                      .addStatement("this.kind = kind")
                       .addStatement("this.id = id")
                       .build())
               .addMethod(
@@ -140,7 +139,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                           "if (id == null) {\n"
                               + " throw new IllegalArgumentException(\"id must not be null\");\n"
                               + "}\n"
-                              + "return new $T(kind, id.toString());",
+                              + "return new $T(id.toString());",
                           ClassName.bestGuess(className))
                       .build())
               .addMethod(
@@ -148,9 +147,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                       .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                       .returns(ClassName.bestGuess(className))
                       .addParameter(TypeName.LONG, "id")
-                      .addCode(
-                          "return new $T(kind, String.valueOf(id));",
-                          ClassName.bestGuess(className))
+                      .addCode("return new $T(String.valueOf(id));", ClassName.bestGuess(className))
                       .build())
               .addMethod(
                   MethodSpec.methodBuilder("of")
@@ -161,7 +158,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                           "if (id == null) {\n"
                               + " throw new IllegalArgumentException(\"id must not be null\");\n"
                               + "}\n"
-                              + "return new $T(kind, id);",
+                              + "return new $T(id);",
                           ClassName.bestGuess(className))
                       .build());
 
