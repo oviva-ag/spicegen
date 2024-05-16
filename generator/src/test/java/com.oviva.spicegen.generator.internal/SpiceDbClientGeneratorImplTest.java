@@ -1,11 +1,7 @@
 package com.oviva.spicegen.generator.internal;
 
-import com.oviva.spicegen.model.ObjectDefinition;
-import com.oviva.spicegen.model.ObjectTypeRef;
-import com.oviva.spicegen.model.Relation;
 import com.oviva.spicegen.model.Schema;
 import com.oviva.spicegen.parser.SpiceDbSchemaParser;
-import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

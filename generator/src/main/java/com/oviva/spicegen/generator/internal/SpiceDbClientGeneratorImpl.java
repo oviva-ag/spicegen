@@ -1,19 +1,22 @@
 package com.oviva.spicegen.generator.internal;
 
+import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
+
 import com.oviva.spicegen.generator.SpiceDbClientGenerator;
 import com.oviva.spicegen.generator.utils.TextUtils;
-import com.oviva.spicegen.model.ObjectDefinition;
-import com.oviva.spicegen.model.Permission;
-import com.oviva.spicegen.model.Relation;
-import com.oviva.spicegen.model.Schema;
+import com.oviva.spicegen.model.*;
 import com.squareup.javapoet.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 import javax.lang.model.element.Modifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
+
+  private static Logger logger = LoggerFactory.getLogger(SpiceDbClientGeneratorImpl.class);
   //  private final Options options;
   //
   //  public SpiceDbClientGeneratorImpl(Options options) {
@@ -100,7 +103,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
       }
       typeSpecStore.put(typedRef);
 
-      typedRef =
+      var typedRefBuilder =
           typedRef.toBuilder()
               .addSuperinterface(ClassName.bestGuess("ObjectRef"))
               .addModifiers(Modifier.PUBLIC)
@@ -160,9 +163,77 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                               + "}\n"
                               + "return new $T(kind, id);",
                           ClassName.bestGuess(className))
-                      .build())
-              .build();
+                      .build());
+
+      addUpdateMethods(typedRefBuilder, definition);
+
+      typedRef = typedRefBuilder.build();
       writeSource(typedRef, ".refs");
+    }
+  }
+
+  private void addUpdateMethods(TypeSpec.Builder typeRefBuilder, ObjectDefinition definition) {
+
+    for (Relation relation : definition.relations()) {
+
+      var relationCamelCase = TextUtils.toPascalCase(relation.name());
+
+      for (ObjectTypeRef allowedObject : relation.allowedObjects()) {
+        if (allowedObject.relationship() != null) {
+          logger.atInfo().log(
+              "skipping update util for {}.{}#{}, can't deal with relationships on allowed objects",
+              definition.name(),
+              allowedObject.typeName(),
+              allowedObject.relationship());
+          continue;
+        }
+
+        // add create
+        var createMethod =
+            "create" + relationCamelCase + TextUtils.toPascalCase(allowedObject.typeName());
+
+        // TODO magic ref
+        var typeRefName = toPascalCase(allowedObject.typeName()) + "Ref";
+
+        typeRefBuilder.addMethod(
+            MethodSpec.methodBuilder(createMethod)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ClassName.get("com.oviva.spicegen.refs", typeRefName), "ref")
+                .returns(ClassName.bestGuess("UpdateRelationship"))
+                .addCode(
+                    """
+                                if ($L == null) {
+                                 throw new IllegalArgumentException("ref must not be null");
+                                }
+                                return $T.ofUpdate(this, $S, $L);
+                                """,
+                    "ref",
+                    ClassName.bestGuess("UpdateRelationship"),
+                    relation.name(),
+                    "ref")
+                .build());
+
+        var deleteMethod =
+            "delete" + relationCamelCase + TextUtils.toPascalCase(allowedObject.typeName());
+
+        typeRefBuilder.addMethod(
+            MethodSpec.methodBuilder(deleteMethod)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ClassName.get("com.oviva.spicegen.refs", typeRefName), "ref")
+                .returns(ClassName.bestGuess("UpdateRelationship"))
+                .addCode(
+                    """
+                                            if ($L == null) {
+                                             throw new IllegalArgumentException("ref must not be null");
+                                            }
+                                            return $T.ofDelete(this, $S, $L);
+                                            """,
+                    "ref",
+                    ClassName.bestGuess("UpdateRelationship"),
+                    relation.name(),
+                    "ref")
+                .build());
+      }
     }
   }
 
