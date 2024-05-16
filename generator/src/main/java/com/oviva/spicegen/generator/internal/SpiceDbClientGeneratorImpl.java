@@ -20,11 +20,6 @@ import org.slf4j.LoggerFactory;
 public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
   private static Logger logger = LoggerFactory.getLogger(SpiceDbClientGeneratorImpl.class);
-  //  private final Options options;
-  //
-  //  public SpiceDbClientGeneratorImpl(Options options) {
-  //    this.options = options;
-  //  }
   private final TypeName objectRefTypeName = ClassName.get(ObjectRef.class);
   private final TypeName updateRelationshipTypeName = ClassName.get(UpdateRelationship.class);
 
@@ -196,7 +191,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
         typeRefBuilder.addMethod(
             MethodSpec.methodBuilder(createMethod)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(ClassName.get("com.oviva.spicegen.refs", typeRefName), "ref")
+                .addParameter(ClassName.get(options.packageName() + ".refs", typeRefName), "ref")
                 .returns(updateRelationshipTypeName)
                 .addCode(
                     """
@@ -217,7 +212,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
         typeRefBuilder.addMethod(
             MethodSpec.methodBuilder(deleteMethod)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(ClassName.get("com.oviva.spicegen.refs", typeRefName), "ref")
+                .addParameter(ClassName.get(options.packageName() + ".refs", typeRefName), "ref")
                 .returns(ClassName.bestGuess("UpdateRelationship"))
                 .addCode(
                     """
