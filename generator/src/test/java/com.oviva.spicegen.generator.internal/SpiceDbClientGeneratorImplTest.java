@@ -20,15 +20,7 @@ class SpiceDbClientGeneratorImplTest {
   void test() {
 
     var generator = new SpiceDbClientGeneratorImpl();
-    var objectDefinition2 = new ObjectDefinition("foo", List.of(), List.of());
-    var objectDefinition1 =
-        new ObjectDefinition(
-            "hi",
-            List.of(new Relation("son_of", List.of(new ObjectTypeRef("foo", null)))),
-            List.of());
-    var definitions = List.of(objectDefinition1, objectDefinition2);
-    var schema = new Schema(definitions);
-    schema = loadSchema("oviva");
+    var schema = loadSchema("oviva");
     generator.generate(schema);
   }
 

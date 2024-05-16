@@ -89,27 +89,8 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
   }
 
   private void generateRefs(Schema spec) {
-    var objectRef = TypeSpec.interfaceBuilder("ObjectRef").build();
-    if (typeSpecStore.has(objectRef.name)) {
-      return;
-    }
-    typeSpecStore.put(objectRef);
-
-    objectRef =
-        objectRef.toBuilder()
-            .addModifiers(Modifier.PUBLIC)
-            .addMethod(
-                MethodSpec.methodBuilder("kind")
-                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                    .returns(String.class)
-                    .build())
-            .addMethod(
-                MethodSpec.methodBuilder("id")
-                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                    .returns(String.class)
-                    .build())
-            .build();
-    writeSource(objectRef, ".refs");
+    var objectRef = createObjectRef();
+    var subjectRef = createSubjectRef();
 
     for (ObjectDefinition definition : spec.definitions()) {
       var className = TextUtils.capitalize(TextUtils.toCamelCase(definition.name())) + "Ref";
@@ -183,6 +164,68 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
               .build();
       writeSource(typedRef, ".refs");
     }
+  }
+
+  private TypeSpec createObjectRef() {
+
+    var objectRef = TypeSpec.interfaceBuilder("ObjectRef").build();
+
+    if (typeSpecStore.has(objectRef.name)) {
+      return typeSpecStore.get(objectRef.name);
+    }
+
+    typeSpecStore.put(objectRef);
+    objectRef =
+        objectRef.toBuilder()
+            .addModifiers(Modifier.PUBLIC)
+            .addMethod(
+                MethodSpec.methodBuilder("kind")
+                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                    .returns(String.class)
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("id")
+                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                    .returns(String.class)
+                    .build())
+            .build();
+
+    writeSource(objectRef, ".refs");
+    return objectRef;
+  }
+
+  private TypeSpec createSubjectRef() {
+
+    var subjectRef = TypeSpec.interfaceBuilder("SubjectRef").build();
+
+    if (typeSpecStore.has(subjectRef.name)) {
+      return typeSpecStore.get(subjectRef.name);
+    }
+
+    typeSpecStore.put(subjectRef);
+    subjectRef =
+        subjectRef.toBuilder()
+            .addModifiers(Modifier.PUBLIC)
+            .addMethod(
+                MethodSpec.methodBuilder("kind")
+                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                    .returns(String.class)
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("id")
+                    .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                    .returns(String.class)
+                    .build())
+            // TODO - extension
+            //        .addMethod(
+            //            MethodSpec.methodBuilder("optionalRelation")
+            //                .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+            //                .returns(String.class)
+            //                .build())
+            .build();
+
+    writeSource(subjectRef, ".refs");
+    return subjectRef;
   }
 
   private void writeSource(TypeSpec typeSpec, String subpackage) {
