@@ -9,6 +9,8 @@ import com.squareup.javapoet.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import javax.lang.model.element.Modifier;
@@ -35,6 +37,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
     generateConstants(spec);
     generateUpdateRelationshipClass();
     generateRefs(spec);
+    generateUpdateRelationships();
   }
 
   private void generateConstants(Schema spec) {
@@ -495,6 +498,233 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
             .build();
 
     writeSource(updateRelationshipTypeSpec, ".refs");
+  }
+
+  private void generateUpdateRelationships() {
+    var updateRelationshipType = TypeSpec.classBuilder("UpdateRelationship").build();
+    if (typeSpecStore.has(updateRelationshipType.name)) {
+      return;
+    }
+    typeSpecStore.put(updateRelationshipType);
+    updateRelationshipType =
+        updateRelationshipType.toBuilder()
+            .addModifiers(Modifier.FINAL)
+            .addField(
+                ClassName.get("com.oviva.spicegen.refs", "ObjectRef"),
+                "resource",
+                Modifier.PRIVATE,
+                Modifier.FINAL)
+            .addField(ClassName.bestGuess("String"), "relation", Modifier.PRIVATE, Modifier.FINAL)
+            .addField(
+                ClassName.get("com.oviva.spicegen.refs", "SubjectRef"),
+                "subject",
+                Modifier.PRIVATE,
+                Modifier.FINAL)
+            .addField(
+                ClassName.bestGuess("Operation"), "operation", Modifier.PRIVATE, Modifier.FINAL)
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addParameter(ClassName.bestGuess("ObjectRef"), "resource")
+                    .addParameter(ClassName.bestGuess("String"), "relation")
+                    .addParameter(ClassName.bestGuess("SubjectRef"), "subject")
+                    .addParameter(ClassName.bestGuess("Operation"), "operation")
+                    .addCode(
+                        "this.resource = resource;\n"
+                            + "this.relation = relation;\n"
+                            + "this.subject = subject;\n"
+                            + "this.operation = operation;")
+                    .build())
+            .addType(
+                TypeSpec.enumBuilder("Operation")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addEnumConstant("UPDATE")
+                    .addEnumConstant("DELETE")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("ofUpdate")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .returns(ClassName.bestGuess("UpdateRelationship"))
+                    .addParameter(ClassName.bestGuess("ObjectRef"), "resource")
+                    .addParameter(ClassName.bestGuess("String"), "relation")
+                    .addParameter(ClassName.bestGuess("SubjectRef"), "subject")
+                    .addCode(
+                        "return new UpdateRelationship(resource, relation, subject, Operation.UPDATE);\n")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("ofDelete")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .returns(ClassName.bestGuess("UpdateRelationship"))
+                    .addParameter(ClassName.bestGuess("ObjectRef"), "resource")
+                    .addParameter(ClassName.bestGuess("String"), "relation")
+                    .addParameter(ClassName.bestGuess("SubjectRef"), "subject")
+                    .addCode(
+                        "return new UpdateRelationship(resource, relation, subject, Operation.DELETE);\n")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("of")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .returns(ClassName.bestGuess("UpdateRelationship"))
+                    .addParameter(ClassName.bestGuess("ObjectRef"), "resource")
+                    .addParameter(ClassName.bestGuess("String"), "relation")
+                    .addParameter(ClassName.bestGuess("SubjectRef"), "subject")
+                    .addParameter(ClassName.bestGuess("Operation"), "operation")
+                    .addCode(
+                        "return new UpdateRelationship(resource, relation, subject, operation);\n")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("resource")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ClassName.bestGuess("ObjectRef"))
+                    .addCode("return resource;")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("relation")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ClassName.bestGuess("String"))
+                    .addCode("return relation;")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("subject")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ClassName.bestGuess("SubjectRef"))
+                    .addCode("return subject;")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("operation")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ClassName.bestGuess("Operation"))
+                    .addCode("return operation;")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("equals")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(TypeName.BOOLEAN)
+                    .addParameter(Object.class, "o")
+                    .addCode(
+                        "if (this == o) {\n"
+                            + " return true;\n"
+                            + "}\n"
+                            + "if (o == null || getClass() != o.getClass()) {\n"
+                            + "  return false;\n"
+                            + "}\n"
+                            + "UpdateRelationship that = (UpdateRelationship) o;\n"
+                            + "return java.util.Objects.equals(resource, that.resource)\n"
+                            + "    && java.util.Objects.equals(relation, that.relation)\n"
+                            + "    && java.util.Objects.equals(subject, that.subject)\n"
+                            + "    && operation == that.operation;")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("hashCode")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(TypeName.INT)
+                    .addCode("return java.util.Objects.hash(resource, relation, subject, operation);")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("toString")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(String.class)
+                    .addCode(
+                        "var res = resource != null ? resource.toString() : \"\";\n"
+                            + "var rel = relation != null ? relation : \"\";\n"
+                            + "var sub = subject != null ? subject.toString() : \"\";\n"
+                            + "return operation.name() + \"(\" + res + \"#\" + rel + \"@\" + sub + \")\";")
+                    .build())
+            .build();
+    writeSource(updateRelationshipType, ".relations");
+
+    var updateRelationshipsType = TypeSpec.classBuilder("UpdateRelationships").build();
+    if (typeSpecStore.has(updateRelationshipsType.name)) {
+      return;
+    }
+    typeSpecStore.put(updateRelationshipsType);
+    updateRelationshipsType =
+        updateRelationshipsType.toBuilder()
+            .addModifiers(Modifier.FINAL)
+            .addField(
+                FieldSpec.builder(
+                        ParameterizedTypeName.get(
+                            ClassName.get(List.class),
+                            ClassName.get("com.oviva.spicegen.relations", "UpdateRelationship")),
+                        "updates",
+                        Modifier.PRIVATE,
+                        Modifier.FINAL)
+                    .build())
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PRIVATE)
+                    .addParameter(
+                        ParameterizedTypeName.get(
+                            ClassName.get(List.class),
+                            ClassName.get("com.oviva.spicegen.relations", "UpdateRelationship")),
+                        "updates")
+                    .addCode("this.updates = List.copyOf(updates);")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("newBuilder")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .returns(ClassName.bestGuess("UpdateRelationshipsBuilder"))
+                    .addCode("return new UpdateRelationshipsBuilder();")
+                    .build())
+            .addMethod(
+                MethodSpec.methodBuilder("updates")
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(
+                        ParameterizedTypeName.get(
+                            ClassName.get(List.class),
+                            ClassName.get("com.oviva.spicegen.relations", "UpdateRelationship")))
+                    .addCode("return updates;")
+                    .build())
+            .addType(
+                TypeSpec.classBuilder("UpdateRelationshipsBuilder")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                    .addField(
+                        FieldSpec.builder(
+                                ParameterizedTypeName.get(
+                                    ClassName.get(List.class),
+                                    ClassName.get(
+                                        "com.oviva.spicegen.relations", "UpdateRelationship")),
+                                "updates",
+                                Modifier.PRIVATE)
+                                .initializer("new $T<>()", ArrayList.class)
+                            .build())
+                    .addMethod(
+                        MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE).build())
+                    .addMethod(
+                        MethodSpec.methodBuilder("updates")
+                            .addModifiers(Modifier.PUBLIC)
+                                .returns(ClassName.bestGuess("UpdateRelationshipsBuilder"))
+                            .addParameter(
+                                ParameterizedTypeName.get(
+                                    ClassName.get(List.class),
+                                    ClassName.get(
+                                        "com.oviva.spicegen.relations", "UpdateRelationship")),
+                                "updates")
+                            .addCode("this.updates = updates;\n" + "return this;")
+                            .build())
+                        .addMethod(
+                                MethodSpec.methodBuilder("update")
+                                        .addModifiers(Modifier.PUBLIC)
+                                        .returns(ClassName.bestGuess("UpdateRelationshipsBuilder"))
+                                        .addParameter(
+
+                                                        ClassName.get(
+                                                                "com.oviva.spicegen.relations", "UpdateRelationship"),
+                                                "update")
+                                        .addCode("this.updates.add(update);\n" + "return this;")
+                                        .build())
+                        .addMethod(
+                                MethodSpec.methodBuilder("build")
+                                        .addModifiers(Modifier.PUBLIC)
+                                        .returns(ClassName.bestGuess("UpdateRelationships"))
+                                        .addCode("return new UpdateRelationships(updates);")
+                                        .build())
+                    .build())
+            .build();
+    writeSource(updateRelationshipsType, ".relations");
+
   }
 
   private void writeSource(TypeSpec typeSpec, String subpackage) {
