@@ -23,6 +23,7 @@
     </contributors>
 
     <modules>
+        <module>api</module>
         <module>generator</module>
         <module>model</module>
     </modules>
@@ -103,8 +104,13 @@
             </dependency>
             <dependency>
                 <groupId>com.oviva.spicegen</groupId>
+                <artifactId>api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oviva.spicegen</groupId>
                 <artifactId>model</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>

@@ -29,6 +29,10 @@
 
         <dependency>
             <groupId>com.oviva.spicegen</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.oviva.spicegen</groupId>
             <artifactId>model</artifactId>
         </dependency>
         <dependency>
