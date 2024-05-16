@@ -3,7 +3,6 @@ package com.oviva.spicegen.generator.internal;
 import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
 
 import com.oviva.spicegen.api.ObjectRef;
-import com.oviva.spicegen.api.SubjectRef;
 import com.oviva.spicegen.api.UpdateRelationship;
 import com.oviva.spicegen.generator.SpiceDbClientGenerator;
 import com.oviva.spicegen.generator.utils.TextUtils;
@@ -27,7 +26,6 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
   //  }
 
   private final TypeName objectRefTypeName = ClassName.get(ObjectRef.class);
-  private final TypeName subjectRefTypeName = ClassName.get(SubjectRef.class);
   private final TypeName updateRelationshipTypeName = ClassName.get(UpdateRelationship.class);
 
   private static final String sourceDirectory = "./out/src/main/java";
@@ -39,20 +37,13 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
   public void generate(Schema spec) {
     typeSpecStore = new TypeSpecStore();
     generateConstants(spec);
-    //    generateUpdateRelationshipClass();
     generateRefs(spec);
   }
 
   private void generateConstants(Schema spec) {
 
     TypeSpec.Builder constants =
-        TypeSpec.classBuilder("SchemaConstants")
-            .addModifiers(Modifier.PUBLIC)
-            .addField(
-                FieldSpec.builder(String.class, "PLATFORM_ID")
-                    .initializer("\"1\"")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                    .build());
+        TypeSpec.classBuilder("SchemaConstants").addModifiers(Modifier.PUBLIC);
 
     for (ObjectDefinition definition : spec.definitions()) {
       FieldSpec namespace =
