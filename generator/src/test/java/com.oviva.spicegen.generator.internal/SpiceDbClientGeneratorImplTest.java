@@ -1,11 +1,15 @@
 package com.oviva.spicegen.generator.internal;
 
+import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.model.Schema;
 import com.oviva.spicegen.parser.SpiceDbSchemaParser;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class SpiceDbClientGeneratorImplTest {
+
+  private static final String sourceDirectory = "./out/src/main/java";
+  private static final String sourcePackageName = "com.oviva.spicegen";
 
   @ParameterizedTest
   @ValueSource(
@@ -15,7 +19,7 @@ class SpiceDbClientGeneratorImplTest {
       })
   void test() {
 
-    var generator = new SpiceDbClientGeneratorImpl();
+    var generator = new SpiceDbClientGeneratorImpl(new Options(sourceDirectory, sourcePackageName));
     var schema = loadSchema("oviva");
     generator.generate(schema);
   }

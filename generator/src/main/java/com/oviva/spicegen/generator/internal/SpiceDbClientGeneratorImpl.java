@@ -2,6 +2,7 @@ package com.oviva.spicegen.generator.internal;
 
 import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
 
+import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.UpdateRelationship;
 import com.oviva.spicegen.generator.SpiceDbClientGenerator;
@@ -24,12 +25,14 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
   //  public SpiceDbClientGeneratorImpl(Options options) {
   //    this.options = options;
   //  }
-
   private final TypeName objectRefTypeName = ClassName.get(ObjectRef.class);
   private final TypeName updateRelationshipTypeName = ClassName.get(UpdateRelationship.class);
 
-  private static final String sourceDirectory = "./out/src/main/java";
-  private static final String sourcePackageName = "com.oviva.spicegen";
+  private final Options options;
+
+  public SpiceDbClientGeneratorImpl(Options options){
+    this.options = options;
+  }
 
   private TypeSpecStore typeSpecStore;
 
@@ -215,7 +218,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
             MethodSpec.methodBuilder(deleteMethod)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(ClassName.get("com.oviva.spicegen.refs", typeRefName), "ref")
-                .returns(updateRelationshipTypeName)
+                .returns(ClassName.bestGuess("UpdateRelationship"))
                 .addCode(
                     """
                                             if ($L == null) {
@@ -233,8 +236,8 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
   }
 
   private void writeSource(TypeSpec typeSpec, String subpackage) {
-    var outputDirectory = sourceDirectory;
-    var packageName = sourcePackageName + subpackage;
+    var outputDirectory = options.outputDirectory();
+    var packageName = options.packageName() + subpackage;
     try {
       var path = Path.of(outputDirectory);
 
