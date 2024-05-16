@@ -115,6 +115,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
               .addField(String.class, "id", Modifier.PRIVATE)
               .addMethod(
                   MethodSpec.constructorBuilder()
+                      .addModifiers(Modifier.PRIVATE)
                       .addParameter(String.class, "id")
                       .addStatement("this.id = id")
                       .build())
