@@ -64,19 +64,11 @@
         <spotless.maven.plugin.version>2.43.0</spotless.maven.plugin.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>github</id>
-            <name>GitHub Oviva Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/oviva-ag/maven-repo</url>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <repository>
             <id>github</id>
             <name>GitHub Oviva Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/oviva-ag/maven-repo</url>
+            <url>https://maven.pkg.github.com/oviva-ag/spicegen</url>
         </repository>
     </distributionManagement>
 
@@ -300,6 +292,29 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
