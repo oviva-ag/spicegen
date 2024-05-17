@@ -4,3 +4,4 @@ target/
 .java-version
 generator/gen/
 generator/out/src
+.flattened-pom.xml

@@ -2,23 +2,19 @@ package com.oviva.spicegen.parser;
 
 import static org.hamcrest.Matchers.*;
 
+import java.nio.file.Path;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class SpiceDbSchemaParserTest {
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {
-        "files", "oviva",
-      })
+  @ValueSource(strings = {"basic", "files", "groups", "platform", "recursive", "synthetic"})
   void test_parsingVersion2AndVersion3ProducesSameResults(String file) {
-    // Given
-    var astInputStream = this.getClass().getResourceAsStream("/%s_ast.json".formatted(file));
+
+    var astInput = Path.of("./src/test/resources/%s.zed".formatted(file));
     var parser = new SpiceDbSchemaParser();
 
-    var schema = parser.parse(astInputStream);
-
-    System.out.println(schema);
+    parser.parse(astInput);
   }
 }

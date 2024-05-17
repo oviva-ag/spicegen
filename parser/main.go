@@ -18,11 +18,31 @@ import (
 func main() {
 	var schemaPath string
 	flag.StringVar(&schemaPath, "schema-path", "", "the path to the SpiceDB schema")
+
+	var outPath string
+	flag.StringVar(&outPath, "out-path", "", "the path to output the AST to")
+
 	flag.Parse()
 
 	if schemaPath == "" {
 		log.Fatal("no schema path defined!")
 		flag.Usage()
+	}
+
+	if len(outPath) == 0 {
+		outPath = "-"
+	}
+
+	log.Printf("generating AST for schema %q to %q", schemaPath, outPath)
+
+	out := os.Stdout
+	if outPath != "-" {
+		f, err := os.OpenFile(outPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		out = f
 	}
 
 	f, err := os.Open(schemaPath)
@@ -35,7 +55,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	enc := json.NewEncoder(os.Stdout)
+	enc := json.NewEncoder(out)
 	enc.SetIndent("", " ")
 	err = enc.Encode(r)
 	if err != nil {

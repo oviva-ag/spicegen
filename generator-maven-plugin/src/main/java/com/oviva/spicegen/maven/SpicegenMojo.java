@@ -19,11 +19,7 @@ package com.oviva.spicegen.maven;
 import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.generator.internal.SpiceDbClientGeneratorImpl;
 import com.oviva.spicegen.parser.SpiceDbSchemaParser;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -38,8 +34,7 @@ public class SpicegenMojo extends AbstractMojo {
   MavenProject project;
 
   @Parameter(
-      defaultValue = "${project.basedir}/src/main/resources/schema_ast.json",
-      //          defaultValue = "${project.basedir}/src/main/resources/schema.zed",
+      defaultValue = "${project.basedir}/src/main/resources/schema.zed",
       property = "schemaPath")
   String schemaPath;
 
@@ -55,29 +50,17 @@ public class SpicegenMojo extends AbstractMojo {
     var log = getLog();
 
     log.info("reading schema from '" + schemaPath + "'");
-    var specInputStream = readSchema();
 
     var generator = new SpiceDbClientGeneratorImpl(new Options(outputDirectory, packageName));
     var parser = new SpiceDbSchemaParser();
 
     log.info("parsing schema");
 
-    // TODO parse direct zed schema
-    var spec = parser.parse(specInputStream);
+    var spec = parser.parse(Path.of(schemaPath));
 
     log.info("generating SpiceDB sources and writing to '" + outputDirectory + "'");
     generator.generate(spec);
 
     project.addCompileSourceRoot(outputDirectory);
-  }
-
-  private InputStream readSchema() throws MojoExecutionException {
-
-    try {
-      return Files.newInputStream(Path.of(schemaPath), StandardOpenOption.READ);
-    } catch (IOException e) {
-      throw new MojoExecutionException(
-          "cannot find asyncapi specification at: '" + schemaPath + "'", e);
-    }
   }
 }
