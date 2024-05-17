@@ -31,13 +31,13 @@ public class SpiceDbSchemaParser {
 
       astPath = Files.createTempFile("%s_ast_".formatted(name), ".json");
 
-      logger.atInfo().log("pre-processing schema into AST from {} to {}", schema, astPath);
+      logger.info("pre-processing schema into AST from {} to {}", schema, astPath);
       preprocessor.parse(astPath, schema);
 
-      logger.atInfo().log("loading AST from {}", astPath);
+      logger.info("loading AST from {}", astPath);
       var root = loadAst(astPath);
 
-      logger.atDebug().log("parsing schema from AST");
+      logger.debug("parsing schema from AST");
       var definitions =
           streamNullable(root.unwrap(BaseNode.class).children())
               .filter(byKind(NodeType.NodeTypeDefinition))
@@ -45,7 +45,7 @@ public class SpiceDbSchemaParser {
               .map(this::mapDefinition)
               .toList();
 
-      logger.atDebug().log("schema parsed");
+      logger.debug("schema parsed");
 
       return new Schema(definitions);
     } catch (IOException e) {

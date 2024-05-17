@@ -173,7 +173,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
       for (ObjectTypeRef allowedObject : relation.allowedObjects()) {
         if (allowedObject.relationship() != null) {
-          logger.atInfo().log(
+          logger.info(
               "skipping update util for {}.{}#{}, can't deal with relationships on allowed objects",
               definition.name(),
               allowedObject.typeName(),

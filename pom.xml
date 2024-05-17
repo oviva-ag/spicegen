@@ -68,7 +68,8 @@
         <jupiter.version>5.10.2</jupiter.version>
         <mockito.jupiter.version>${mockito.version}</mockito.jupiter.version>
         <mockito.version>5.11.0</mockito.version>
-        <org.slf4j.version>2.0.13</org.slf4j.version>
+        <!-- maven plugins cannot deal with slf4j 2.x -->
+        <org.slf4j.version>1.7.36</org.slf4j.version>
         <spotbugs-annotations.version>4.8.4</spotbugs-annotations.version>
         <spotless.maven.plugin.version>2.43.0</spotless.maven.plugin.version>
     </properties>
@@ -93,11 +94,15 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-bom</artifactId>
+                <artifactId>slf4j-api</artifactId>
                 <version>${org.slf4j.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${org.slf4j.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>com.oviva.spicegen</groupId>

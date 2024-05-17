@@ -60,7 +60,7 @@ public class AstPreProcessor {
 
     var binary = "spicegen_%s".formatted(target);
 
-    logger.atInfo().log("moving pre-processor '{}' from to '{}'", binary, parserDestination);
+    logger.info("moving pre-processor '{}' from to '{}'", binary, parserDestination);
 
     try (var is = this.getClass().getResourceAsStream("/" + binary);
         var os =
