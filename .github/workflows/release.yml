@@ -61,5 +61,5 @@ jobs:
             parser/dist/spicegen_linux_arm64/spicegen
 
 permissions:
-      contents: read
+      contents: write
       packages: write
