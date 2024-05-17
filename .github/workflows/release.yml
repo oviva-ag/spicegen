@@ -55,6 +55,7 @@ jobs:
             parser/dist/spicegen_Linux_arm64.tar.gz
             parser/dist/spicegen_Linux_i386.tar.gz
             parser/dist/spicegen_Linux_x86_64.tar.gz
+            parser/dist/spicegen_darwin_amd64_v1/spicegen
             parser/dist/spicegen_darwin_arm64/spicegen
             parser/dist/spicegen_linux_386/spicegen
             parser/dist/spicegen_linux_amd64_v1/spicegen
