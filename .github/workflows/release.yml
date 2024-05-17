@@ -18,6 +18,10 @@ jobs:
           cache: 'maven'
       - name: Set up Go
         uses: actions/setup-go@v4
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          install-only: true
       - name: Get version
         id: version
         run: |
@@ -37,15 +41,6 @@ jobs:
         run: make build
       - name: Publish package
         run: mvn --batch-mode deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5
-        with:
-          distribution: goreleaser
-          version: '~> v1'
-          args: release --snapshot
-          workdir: ./parser
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
