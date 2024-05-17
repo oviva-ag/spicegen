@@ -13,6 +13,9 @@ This is a Java generator for SpiceDB schemas which:
 
 ## Getting Started
 
+**Prerequistes:**
+- [GitHub packages for Maven](https://docs.github.com/de/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry)
+
 1. Add the  `com.oviva.spicegen:api` dependency
 2. Add the  `com.oviva.spicegen:spicegen-maven-plugin` plugin
 
