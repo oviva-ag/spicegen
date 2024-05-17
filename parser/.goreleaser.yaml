@@ -12,9 +12,6 @@ before:
   hooks:
     - go mod tidy
 
-upx:
-  - enabled: true
-
 builds:
   - env:
       - CGO_ENABLED=0
