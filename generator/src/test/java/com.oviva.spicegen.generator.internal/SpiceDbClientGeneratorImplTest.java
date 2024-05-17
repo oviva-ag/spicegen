@@ -23,7 +23,7 @@ class SpiceDbClientGeneratorImplTest {
 
   private Schema loadSchema(String name) {
 
-    var astInput = Path.of("./src/test/resources/fixtures/%s_ast.json".formatted(name));
+    var astInput = Path.of("./src/test/resources/%s.zed".formatted(name));
     var parser = new SpiceDbSchemaParser();
 
     return parser.parse(astInput);
