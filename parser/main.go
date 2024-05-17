@@ -3,6 +3,7 @@ package main
 import (
 	"container/list"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -16,8 +17,13 @@ import (
 
 func main() {
 	var schemaPath string
+	flag.StringVar(&schemaPath, "schema-path", "", "the path to the SpiceDB schema")
+	flag.Parse()
 
-	schemaPath = "./basic.zed"
+	if schemaPath == "" {
+		log.Fatal("no schema path defined!")
+		flag.Usage()
+	}
 
 	f, err := os.Open(schemaPath)
 	if err != nil {
