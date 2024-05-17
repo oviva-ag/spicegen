@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +27,20 @@ public class AstPreProcessor {
 
       loadParserBinary(parser);
 
-      var process =
+      var builder =
           new ProcessBuilder(
                   parser.toString(),
                   "-schema-path",
                   schemaSource.toString(),
                   "-out-path",
                   astDestination.toString())
-              .redirectError(ProcessBuilder.Redirect.INHERIT)
-              .start();
+              .redirectError(ProcessBuilder.Redirect.INHERIT);
+
+      var args =
+          builder.command().stream().map(s -> "'" + s + "'").collect(Collectors.joining(" "));
+      logger.info("executing {}", args);
+
+      var process = builder.start();
 
       var success = process.waitFor(20, TimeUnit.SECONDS);
       if (!success) {

@@ -12,7 +12,6 @@ import (
 	"github.com/authzed/spicedb/pkg/schemadsl/dslshape"
 	"github.com/authzed/spicedb/pkg/schemadsl/input"
 	"github.com/authzed/spicedb/pkg/schemadsl/parser"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
@@ -71,8 +70,6 @@ func Parse(sourceName string, r io.Reader) (Node, error) {
 
 	rawRoot := parser.Parse(createAstNode, input.Source(sourceName), string(b))
 	root := rawRoot.(*astNode)
-
-	spew.Dump(root)
 
 	mapped := parse(root)
 	return mapped, nil
