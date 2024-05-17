@@ -53,14 +53,16 @@ jobs:
           body: |
             The spice must flow!
           files: |
+            README.md
             parser/dist/spicegen_Darwin_arm64.tar.gz
             parser/dist/spicegen_Darwin_x86_64.tar.gz
             parser/dist/spicegen_Linux_arm64.tar.gz
             parser/dist/spicegen_Linux_i386.tar.gz
             parser/dist/spicegen_Linux_x86_64.tar.gz
-            parser/dist/spicegen_darwin_amd64_v1/spicegen
-            parser/dist/spicegen_darwin_arm64/spicegen
-            parser/dist/spicegen_linux_386/spicegen
-            parser/dist/spicegen_linux_amd64_v1/spicegen
-            parser/dist/spicegen_linux_arm64/spicegen
+            parser/dist/spicegen_darwin_amd64_v1/spicegen_darwin_amd64_v1
+            parser/dist/spicegen_darwin_arm64/spicegen_darwin_arm64
+            parser/dist/spicegen_linux_386/spicegen_linux_386
+            parser/dist/spicegen_linux_amd64_v1/spicegen_linux_amd64_v1
+            parser/dist/spicegen_linux_arm64/spicegen_linux_arm64
+
 
