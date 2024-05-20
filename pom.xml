@@ -36,6 +36,7 @@
         <module>generator-maven-plugin</module>
         <module>generator</module>
         <module>model</module>
+        <module>spicedb-binding</module>
     </modules>
 
     <properties>
@@ -63,14 +64,18 @@
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
         <maven.versions.plugin.version>2.16.2</maven.versions.plugin.version>
 
+        <grpc.version>1.63.0</grpc.version>
+        <!-- maven plugins cannot deal with slf4j 2.x -->
+        <org.slf4j.version>1.7.36</org.slf4j.version>
+
         <hamcrest.version>2.2</hamcrest.version>
         <jackson.version>2.17.0</jackson.version>
         <jupiter.version>5.10.2</jupiter.version>
         <mockito.jupiter.version>${mockito.version}</mockito.jupiter.version>
         <mockito.version>5.11.0</mockito.version>
-        <!-- maven plugins cannot deal with slf4j 2.x -->
-        <org.slf4j.version>1.7.36</org.slf4j.version>
-        <spotbugs-annotations.version>4.8.4</spotbugs-annotations.version>
+        <testcontainers.version>1.19.7</testcontainers.version>
+        <authzed.version>0.7.0</authzed.version>
+
         <spotless.maven.plugin.version>2.43.0</spotless.maven.plugin.version>
     </properties>
 
@@ -91,6 +96,13 @@
                 <version>${jackson.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -121,10 +133,11 @@
             </dependency>
 
             <dependency>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-annotations</artifactId>
-                <version>${spotbugs-annotations.version}</version>
+                <groupId>com.authzed.api</groupId>
+                <artifactId>authzed</artifactId>
+                <version>${authzed.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
@@ -148,6 +161,13 @@
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.jupiter.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -249,6 +269,11 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
