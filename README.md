@@ -5,15 +5,16 @@
 
 *Look no further!*
 
-This is a Java generator for SpiceDB schemas which:
+This is a Java generator for SpiceDB schemas which generates:
 
-- generates `String` constants for object definitions, permissions and relations
-- generates type-safe object references
-- provides factory methods to assemble type-safe relationship updates
+- **constants** - generates `string` constants for object definitions, permissions and relations
+- **type-safe references** - generates type-safe object references
+- **type-safe relationship updates** - provides factory methods to assemble type-safe relationship updates
 
 ## Getting Started
 
 **Prerequistes:**
+
 - [GitHub packages for Maven](https://docs.github.com/de/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry)
 
 1. Add the  `com.oviva.spicegen:api` dependency
@@ -23,6 +24,8 @@ Example `pom.xml`
 
 ```xml
 ...
+        <!-- `repository` &` pluginRepository` definitions according to GitHub package -->
+        ...
 <dependencies>
     <dependency>
         <groupId>com.oviva.spicegen</groupId>
@@ -39,8 +42,7 @@ Example `pom.xml`
     <executions>
         <execution>
             <configuration>
-                <!-- NOTE: for now the schema needs to be pre-processed into an AST -->
-                <asyncApiPath>${project.basedir}/src/main/resources/schema_ast.json</asyncApiPath>
+                <schemaPath>${project.basedir}/src/main/resources/schema.zed</schemaPath>
                 <packageName>${project.groupId}.permissions</packageName>
                 <outputDirectory>${project.basedir}/target/generated-sources/src/main/java</outputDirectory>
             </configuration>
@@ -52,3 +54,27 @@ Example `pom.xml`
 </plugin>
 </plugins>
 ```
+
+## Implementation Overview
+
+```mermaid
+graph LR
+    schema[/schema.zed/] -- " pre-process to AST (go) " --> ast[Abstract Syntax Tree]
+    ast -- " read and map (java) " --> model[Schema Model]
+    model -- generate --> source[/TypeDefs & Schema Constants/]
+```
+
+The generator work in multiple stages that could be re-used for other generators, namely:
+
+1. The SpiceDB schema is parsed (`*.zed`) into an AST by the official lexer and parser. See [parser](./parser).
+2. The AST is serialized to JSON, which in turn is picked up by the Java generator and transformed
+   into a nice model. See [model](./model).
+3. The schema model is transformed into Java sources. See [generator](./generator)
+
+To make this easy to use, all the above is bundled in the [maven plugin](./generator-maven-plugin).
+
+## Wishlist
+
+- type-safe IDs, needs additional metadata in the schema
+- generate caveats
+- permission check boilerplate, might need additional schema metadata
