@@ -1,4 +1,4 @@
-package com.oviva.spicegen.api;
+package com.oviva.spicegen.api.exceptions;
 
 public class ClientException extends RuntimeException {
   public ClientException(String message) {
