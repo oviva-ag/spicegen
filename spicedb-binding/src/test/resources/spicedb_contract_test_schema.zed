@@ -1,0 +1,17 @@
+definition user {}
+definition tenant {
+    relation patient: user
+    relation coach: user
+}
+
+definition patient {
+    relation tenant: tenant
+    relation coacher: user
+
+    permission write = coacher & tenant->coach
+}
+
+definition document {
+    relation patient: patient
+    permission write = patient->write
+}
