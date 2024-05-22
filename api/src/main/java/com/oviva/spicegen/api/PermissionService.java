@@ -12,4 +12,12 @@ public interface PermissionService {
    * @return the result, containing the consistencyToken
    */
   UpdateResult updateRelationships(UpdateRelationships updateRelationships);
+
+  /**
+   * Checks whether a subject has the given permission on a resource
+   *
+   * @param checkPermission the request
+   * @return true it the subject is permitted, false otherwise
+   */
+  boolean checkPermission(CheckPermission checkPermission);
 }

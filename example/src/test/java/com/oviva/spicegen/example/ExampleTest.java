@@ -1,19 +1,12 @@
 package com.oviva.spicegen.example;
 
-import static com.authzed.api.v1.PermissionService.CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
-import com.authzed.api.v1.Core;
 import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.authzed.api.v1.SchemaServiceGrpc;
 import com.authzed.api.v1.SchemaServiceOuterClass;
 import com.authzed.grpcutil.BearerToken;
-import com.oviva.spicegen.api.ObjectRef;
-import com.oviva.spicegen.api.PermissionService;
-import com.oviva.spicegen.api.SubjectRef;
-import com.oviva.spicegen.api.UpdateRelationships;
-import com.oviva.spicegen.permissions.SchemaConstants;
+import com.oviva.spicegen.api.*;
 import com.oviva.spicegen.permissions.refs.DocumentRef;
 import com.oviva.spicegen.permissions.refs.FolderRef;
 import com.oviva.spicegen.permissions.refs.UserRef;
@@ -107,42 +100,9 @@ public class ExampleTest {
     var consistencyToken = updateResult.consistencyToken();
 
     // EXAMPLE: checking permission
-    var res =
-        checkPermission(
-            document,
-            // note the generated constants!
-            SchemaConstants.PERMISSION_DOCUMENT_READ,
-            SubjectRef.ofObject(user),
-            consistencyToken);
-
-    assertEquals(PERMISSIONSHIP_HAS_PERMISSION, res.getPermissionship());
-  }
-
-  private com.authzed.api.v1.PermissionService.CheckPermissionResponse checkPermission(
-      ObjectRef object, String permission, SubjectRef subject, String consistencyToken) {
-
-    return permissionServiceStub.checkPermission(
-        com.authzed.api.v1.PermissionService.CheckPermissionRequest.newBuilder()
-            .setPermission(permission)
-            .setResource(
-                Core.ObjectReference.newBuilder()
-                    .setObjectType(object.kind())
-                    .setObjectId(object.id())
-                    .build())
-            .setSubject(
-                Core.SubjectReference.newBuilder()
-                    .setObject(
-                        Core.ObjectReference.newBuilder()
-                            .setObjectType(subject.kind())
-                            .setObjectId(subject.id())
-                            .build())
-                    .build())
-            .setConsistency(
-                com.authzed.api.v1.PermissionService.Consistency.newBuilder()
-                    .setAtLeastAsFresh(
-                        Core.ZedToken.newBuilder().setToken(consistencyToken).build())
-                    .build())
-            .build());
+    assertTrue(
+        permissionService.checkPermission(
+            document.checkRead(SubjectRef.ofObject(user), Consistency.fullyConsistent())));
   }
 
   private String loadSchema() {

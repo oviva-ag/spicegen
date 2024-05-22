@@ -2,8 +2,7 @@ package com.oviva.spicegen.generator.internal;
 
 import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
 
-import com.oviva.spicegen.api.ObjectRef;
-import com.oviva.spicegen.api.UpdateRelationship;
+import com.oviva.spicegen.api.*;
 import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.generator.SpiceDbClientGenerator;
 import com.oviva.spicegen.generator.utils.TextUtils;
@@ -160,8 +159,40 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
       addUpdateMethods(typedRefBuilder, definition);
 
+      addCheckMethods(typedRefBuilder, definition);
+
       typedRef = typedRefBuilder.build();
       writeSource(typedRef, ".refs");
+    }
+  }
+
+  private void addCheckMethods(TypeSpec.Builder typeRefBuilder, ObjectDefinition definition) {
+    for (Permission permission : definition.permissions()) {
+
+      var permissionName = TextUtils.toPascalCase(permission.name());
+      var checkMethod = "check" + permissionName;
+
+      var subjectParamName = "subject";
+      var consistencyParamName = "consistency";
+
+      typeRefBuilder.addMethod(
+          MethodSpec.methodBuilder(checkMethod)
+              .addModifiers(Modifier.PUBLIC)
+              .addParameter(ClassName.get(SubjectRef.class), subjectParamName)
+              .addParameter(ClassName.get(Consistency.class), consistencyParamName)
+              .returns(ClassName.get(CheckPermission.class))
+              .addCode(
+                  """
+                    if ($L == null) {
+                     throw new IllegalArgumentException("subject must not be null");
+                    }
+                    return CheckPermission.newBuilder().resource(this).permission($S).subject($L).consistency($L).build();
+                  """,
+                  subjectParamName,
+                  permission.name(),
+                  subjectParamName,
+                  consistencyParamName)
+              .build());
     }
   }
 
