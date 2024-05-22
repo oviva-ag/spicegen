@@ -102,7 +102,7 @@ public class ExampleTest {
     // EXAMPLE: checking permission
     assertTrue(
         permissionService.checkPermission(
-            document.checkRead(SubjectRef.ofObject(user), Consistency.fullyConsistent())));
+            document.checkRead(SubjectRef.ofObject(user), Consistency.atLeastAsFreshAs(consistencyToken))));
   }
 
   private String loadSchema() {
