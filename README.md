@@ -73,6 +73,10 @@ The generator work in multiple stages that could be re-used for other generators
 
 To make this easy to use, all the above is bundled in the [maven plugin](./generator-maven-plugin).
 
+## Useful Links
+
+- [SpiceDB API Docs](https://buf.build/authzed/api/docs/main/authzed.api.v1)
+
 ## Wishlist
 
 - type-safe IDs, needs additional metadata in the schema
