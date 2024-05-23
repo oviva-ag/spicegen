@@ -8,15 +8,14 @@ import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.UpdateRelationship;
 import org.junit.jupiter.api.Test;
 
-public class CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapperTest {
+public class UpdateRelationshipMapperTest {
 
   private static final String TENANT = "tenant";
   private static final String USER = "user";
   private static final String ADMINISTRATOR = "administrator";
   private static final String ID = "9392";
 
-  private final CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapper mapper =
-      new CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapper();
+  private final UpdateRelationshipMapper mapper = new UpdateRelationshipMapper();
 
   @Test
   public void test_mapper_withUpdateOperation() {

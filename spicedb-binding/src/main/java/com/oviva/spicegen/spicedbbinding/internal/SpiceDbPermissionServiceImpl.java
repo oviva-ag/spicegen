@@ -6,8 +6,7 @@ import com.oviva.spicegen.api.*;
 import io.grpc.StatusRuntimeException;
 
 public class SpiceDbPermissionServiceImpl implements PermissionService {
-  private final CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapper updateRelationshipMapper =
-      new CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapper();
+  private final UpdateRelationshipMapper updateRelationshipMapper = new UpdateRelationshipMapper();
   private final PreconditionMapper preconditionMapper = new PreconditionMapper();
 
   private final PermissionsServiceGrpc.PermissionsServiceBlockingStub permissionsService;
