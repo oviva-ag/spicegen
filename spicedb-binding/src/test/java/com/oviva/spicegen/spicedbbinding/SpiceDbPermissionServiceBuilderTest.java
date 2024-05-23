@@ -1,7 +1,6 @@
 package com.oviva.spicegen.spicedbbinding;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.authzed.grpcutil.BearerToken;
@@ -28,6 +27,6 @@ public class SpiceDbPermissionServiceBuilderTest {
             .permissionsBlockingStub(permissionsService)
             .build();
 
-    assertThat(svc, instanceOf(PermissionService.class));
+    assertTrue(svc instanceof PermissionService);
   }
 }

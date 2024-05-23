@@ -46,12 +46,12 @@ public final class Precondition {
 
     private Builder() {}
 
-    public Builder withCondition(Condition val) {
+    public Builder condition(Condition val) {
       condition = val;
       return this;
     }
 
-    public Builder withFilter(RelationshipFilter val) {
+    public Builder filter(RelationshipFilter val) {
       filter = val;
       return this;
     }

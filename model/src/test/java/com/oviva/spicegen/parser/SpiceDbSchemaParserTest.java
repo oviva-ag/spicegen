@@ -1,7 +1,5 @@
 package com.oviva.spicegen.parser;
 
-import static org.hamcrest.Matchers.*;
-
 import java.nio.file.Path;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

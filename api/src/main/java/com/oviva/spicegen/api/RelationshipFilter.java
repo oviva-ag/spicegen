@@ -81,17 +81,17 @@ public final class RelationshipFilter {
 
       private Builder() {}
 
-      public Builder withSubjectKind(String val) {
+      public Builder subjectKind(String val) {
         subjectKind = val;
         return this;
       }
 
-      public Builder withSubjectId(String val) {
+      public Builder subjectId(String val) {
         subjectId = val;
         return this;
       }
 
-      public Builder withRelation(String val) {
+      public Builder relation(String val) {
         relation = val;
         return this;
       }
@@ -110,22 +110,22 @@ public final class RelationshipFilter {
 
     private Builder() {}
 
-    public Builder withResourceKind(String val) {
+    public Builder resourceKind(String val) {
       resourceKind = val;
       return this;
     }
 
-    public Builder withResourceId(String val) {
+    public Builder resourceId(String val) {
       resourceId = val;
       return this;
     }
 
-    public Builder withRelation(String val) {
+    public Builder relation(String val) {
       relation = val;
       return this;
     }
 
-    public Builder withSubjectFilter(SubjectFilter val) {
+    public Builder subjectFilter(SubjectFilter val) {
       subjectFilter = val;
       return this;
     }

@@ -22,13 +22,13 @@ public final class UpdateRelationship {
   public static UpdateRelationship ofUpdate(
       ObjectRef resource, String relation, ObjectRef subject) {
     return new UpdateRelationship(
-        resource, relation, new ObjectRefSubject(subject), Operation.UPDATE);
+        resource, relation, SubjectRef.ofObject(subject), Operation.UPDATE);
   }
 
   public static UpdateRelationship ofDelete(
       ObjectRef resource, String relation, ObjectRef subject) {
     return new UpdateRelationship(
-        resource, relation, new ObjectRefSubject(subject), Operation.DELETE);
+        resource, relation, SubjectRef.ofObject(subject), Operation.DELETE);
   }
 
   public SubjectRef subject() {
@@ -79,23 +79,5 @@ public final class UpdateRelationship {
     UPDATE,
 
     DELETE
-  }
-
-  private static class ObjectRefSubject implements SubjectRef {
-    private final ObjectRef subject;
-
-    private ObjectRefSubject(ObjectRef subject) {
-      this.subject = subject;
-    }
-
-    @Override
-    public String kind() {
-      return subject.kind();
-    }
-
-    @Override
-    public String id() {
-      return subject.id();
-    }
   }
 }

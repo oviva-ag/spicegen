@@ -1,8 +1,7 @@
 package com.oviva.spicegen.spicedbbinding.internal;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.authzed.api.v1.Core;
 import com.oviva.spicegen.api.ObjectRef;
@@ -28,11 +27,11 @@ public class CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapperTest {
     var updateRelationship = UpdateRelationship.ofUpdate(resource, ADMINISTRATOR, subject);
     var map = mapper.map(updateRelationship);
 
-    assertThat(map.getOperation(), equalTo(Core.RelationshipUpdate.Operation.OPERATION_TOUCH));
-    assertThat(map.getRelationship(), notNullValue());
-    assertThat(map.getRelationship().getRelation(), equalTo(ADMINISTRATOR));
-    assertThat(map.getRelationship().getResource().getObjectId(), equalTo(ID));
-    assertThat(map.getRelationship().getResource().getObjectType(), equalTo(TENANT));
+    assertEquals(map.getOperation(), Core.RelationshipUpdate.Operation.OPERATION_TOUCH);
+    assertNotNull(map.getRelationship());
+    assertEquals(map.getRelationship().getRelation(), ADMINISTRATOR);
+    assertEquals(map.getRelationship().getResource().getObjectId(), ID);
+    assertEquals(map.getRelationship().getResource().getObjectType(), TENANT);
   }
 
   @Test
@@ -44,10 +43,10 @@ public class CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapperTest {
     var updateRelationship = UpdateRelationship.ofDelete(resource, ADMINISTRATOR, subject);
     var map = mapper.map(updateRelationship);
 
-    assertThat(map.getOperation(), equalTo(Core.RelationshipUpdate.Operation.OPERATION_DELETE));
-    assertThat(map.getRelationship(), notNullValue());
-    assertThat(map.getRelationship().getRelation(), equalTo(ADMINISTRATOR));
-    assertThat(map.getRelationship().getResource().getObjectId(), equalTo(ID));
-    assertThat(map.getRelationship().getResource().getObjectType(), equalTo(TENANT));
+    assertEquals(map.getOperation(), Core.RelationshipUpdate.Operation.OPERATION_DELETE);
+    assertNotNull(map.getRelationship());
+    assertEquals(map.getRelationship().getRelation(), ADMINISTRATOR);
+    assertEquals(map.getRelationship().getResource().getObjectId(), ID);
+    assertEquals(map.getRelationship().getResource().getObjectType(), TENANT);
   }
 }

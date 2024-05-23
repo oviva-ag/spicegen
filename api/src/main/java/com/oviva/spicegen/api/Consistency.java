@@ -45,6 +45,9 @@ public final class Consistency {
   }
 
   public static Consistency atLeastAsFreshAs(String consistencyToken) {
+    if (consistencyToken == null) {
+      return FULLY_CONSISTENT;
+    }
     return new Consistency(Requirement.AT_LEAST_AS_FRESH, consistencyToken);
   }
 

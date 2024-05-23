@@ -1,7 +1,7 @@
 package com.oviva.spicegen.spicedbbinding.internal;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.oviva.spicegen.api.exceptions.*;
 import io.grpc.Status;
@@ -16,24 +16,24 @@ public class GrpcExceptionMapperTest {
   public void test_map_permissionDenied() {
     var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.PERMISSION_DENIED));
 
-    assertThat(exception, instanceOf(AuthorizationException.class));
-    assertThat(exception.getMessage(), equalTo("permission denied"));
+    assertTrue(exception instanceof AuthorizationException);
+    assertEquals(exception.getMessage(), "permission denied");
   }
 
   @Test
   public void test_map_unauthenticated() {
     var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.UNAUTHENTICATED));
 
-    assertThat(exception, instanceOf(AuthenticationException.class));
-    assertThat(exception.getMessage(), equalTo("unauthenticated"));
+    assertTrue(exception instanceof AuthenticationException);
+    assertEquals(exception.getMessage(), "unauthenticated");
   }
 
   @Test
   public void test_map_alreadyExists() {
     var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.ALREADY_EXISTS));
 
-    assertThat(exception, instanceOf(ConflictException.class));
-    assertThat(exception.getMessage(), equalTo("already exists"));
+    assertTrue(exception instanceof ConflictException);
+    assertEquals(exception.getMessage(), "already exists");
   }
 
   @Test
@@ -41,23 +41,23 @@ public class GrpcExceptionMapperTest {
 
     var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.INVALID_ARGUMENT));
 
-    assertThat(exception, instanceOf(ValidationException.class));
-    assertThat(exception.getMessage(), equalTo("invalid argument"));
+    assertTrue(exception instanceof ValidationException);
+    assertEquals(exception.getMessage(), "invalid argument");
   }
 
   @Test
   public void test_map_failedPrecondition() {
     var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.FAILED_PRECONDITION));
 
-    assertThat(exception, instanceOf(ValidationException.class));
-    assertThat(exception.getMessage(), equalTo("failed precondition"));
+    assertTrue(exception instanceof ValidationException);
+    assertEquals(exception.getMessage(), "failed precondition");
   }
 
   @Test
   public void test_map_unexpectedValue() {
     var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.CANCELLED));
 
-    assertThat(exception, instanceOf(ClientException.class));
-    assertThat(exception.getMessage(), containsString("unexpected status:"));
+    assertTrue(exception instanceof ClientException);
+    assertTrue(exception.getMessage().startsWith("unexpected status:"));
   }
 }

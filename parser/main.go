@@ -36,7 +36,7 @@ func main() {
 
 	out := os.Stdout
 	if outPath != "-" {
-		f, err := os.OpenFile(outPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		f, err := os.OpenFile(outPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 		if err != nil {
 			log.Fatal(err)
 		}
