@@ -3,7 +3,7 @@ package com.oviva.spicegen.spicedbbinding.internal;
 import com.authzed.api.v1.Core;
 import com.oviva.spicegen.api.UpdateRelationship;
 
-public class CreateRelationshipUpdateToSpiceDBUpdateRelationshipMapper {
+public class UpdateRelationshipMapper {
 
   private final ObjectReferenceMapper objectReferenceMapper = new ObjectReferenceMapper();
   private final SubjectReferenceMapper subjectReferenceMapper = new SubjectReferenceMapper();

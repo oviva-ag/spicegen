@@ -36,7 +36,7 @@ func main() {
 
 	out := os.Stdout
 	if outPath != "-" {
-		f, err := os.OpenFile(outPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		f, err := os.OpenFile(outPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -65,7 +65,7 @@ func main() {
 func Parse(sourceName string, r io.Reader) (Node, error) {
 	b, err := io.ReadAll(r)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read schema %s", sourceName)
+		return nil, fmt.Errorf("failed to read schema %s: %w", sourceName, err)
 	}
 
 	rawRoot := parser.Parse(createAstNode, input.Source(sourceName), string(b))

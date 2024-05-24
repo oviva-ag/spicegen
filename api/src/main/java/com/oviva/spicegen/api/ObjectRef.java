@@ -1,21 +1,20 @@
 package com.oviva.spicegen.api;
 
+import com.oviva.spicegen.api.internal.ObjectRefImpl;
+
 public interface ObjectRef {
   String kind();
 
   String id();
 
   static ObjectRef of(String kind, String id) {
-    return new ObjectRef() {
-      @Override
-      public String kind() {
-        return kind;
-      }
+    if (kind == null) {
+      throw new IllegalArgumentException("kind must  not be null");
+    }
+    if (id == null) {
+      throw new IllegalArgumentException("id must  not be null");
+    }
 
-      @Override
-      public String id() {
-        return id;
-      }
-    };
+    return new ObjectRefImpl(kind, id);
   }
 }
