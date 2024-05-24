@@ -1,6 +1,6 @@
 package com.oviva.spicegen.api;
 
-import java.util.Objects;
+import com.oviva.spicegen.api.internal.ObjectRefImpl;
 
 public interface ObjectRef {
   String kind();
@@ -14,35 +14,7 @@ public interface ObjectRef {
     if (id == null) {
       throw new IllegalArgumentException("id must  not be null");
     }
-    return new ObjectRef() {
-      @Override
-      public String kind() {
-        return kind;
-      }
 
-      @Override
-      public String id() {
-        return id;
-      }
-
-      @Override
-      public String toString() {
-        return "%s:%s".formatted(kind, id);
-      }
-
-      @Override
-      public int hashCode() {
-        return Objects.hash(kind, id);
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-        if (!(obj instanceof ObjectRef ref)) {
-          return false;
-        }
-
-        return Objects.equals(this.kind(), ref.kind()) && Objects.equals(this.id(), ref.id());
-      }
-    };
+    return new ObjectRefImpl(kind, id);
   }
 }
