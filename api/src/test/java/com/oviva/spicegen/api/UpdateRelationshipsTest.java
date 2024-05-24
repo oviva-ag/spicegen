@@ -34,10 +34,7 @@ public class UpdateRelationshipsTest {
     var preconditions = getPreconditionList();
 
     var updateRelationships =
-        UpdateRelationships.UpdateRelationshipsBuilder.newBuilder()
-            .updates(updates)
-            .preconditions(preconditions)
-            .build();
+        UpdateRelationships.newBuilder().updates(updates).preconditions(preconditions).build();
 
     assertEquals(updateRelationships.updates(), updates);
     assertEquals(updateRelationships.preconditions(), preconditions);
@@ -65,7 +62,7 @@ public class UpdateRelationshipsTest {
     var updateRelationship = UpdateRelationship.ofUpdate(resource, ADMINISTRATOR, subject);
 
     var updateRelationships =
-        UpdateRelationships.UpdateRelationshipsBuilder.newBuilder()
+        UpdateRelationships.newBuilder()
             .precondition(precondition)
             .update(updateRelationship)
             .build();

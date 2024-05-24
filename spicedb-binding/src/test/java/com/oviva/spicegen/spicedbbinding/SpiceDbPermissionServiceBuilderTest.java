@@ -1,6 +1,6 @@
 package com.oviva.spicegen.spicedbbinding;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.authzed.grpcutil.BearerToken;
@@ -27,6 +27,6 @@ public class SpiceDbPermissionServiceBuilderTest {
             .permissionsBlockingStub(permissionsService)
             .build();
 
-    assertTrue(svc instanceof PermissionService);
+    assertInstanceOf(PermissionService.class, svc);
   }
 }

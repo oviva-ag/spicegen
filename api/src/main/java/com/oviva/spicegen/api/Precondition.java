@@ -1,63 +1,36 @@
 package com.oviva.spicegen.api;
 
-public final class Precondition {
+import com.oviva.spicegen.api.internal.PreconditionImpl;
 
-  private final Condition condition;
-  private final RelationshipFilter filter;
+public interface Precondition {
 
-  private Precondition(Builder builder) {
-    condition = builder.condition;
-    filter = builder.filter;
+  Condition condition();
+
+  RelationshipFilter filter();
+
+  static Precondition mustMatch(RelationshipFilter filter) {
+    return new PreconditionImpl(Condition.MUST_MATCH, filter);
   }
 
-  public static Precondition mustMatch(RelationshipFilter filter) {
-    return new Precondition(Condition.MUST_MATCH, filter);
+  static Precondition mustNotMatch(RelationshipFilter filter) {
+    return new PreconditionImpl(Condition.MUST_NOT_MATCH, filter);
   }
 
-  public static Precondition mustNotMatch(RelationshipFilter filter) {
-    return new Precondition(Condition.MUST_NOT_MATCH, filter);
-  }
-
-  public static Builder newBuilder() {
-    return new Builder();
-  }
-
-  private Precondition(Condition condition, RelationshipFilter filter) {
-    this.condition = condition;
-    this.filter = filter;
-  }
-
-  public Condition condition() {
-    return condition;
-  }
-
-  public RelationshipFilter filter() {
-    return filter;
-  }
-
-  public enum Condition {
+  enum Condition {
     MUST_MATCH,
     MUST_NOT_MATCH
   }
 
-  public static final class Builder {
-    private Condition condition;
-    private RelationshipFilter filter;
+  static Builder newBuilder() {
+    return new PreconditionImpl.Builder();
+  }
 
-    private Builder() {}
+  interface Builder {
 
-    public Builder condition(Condition val) {
-      condition = val;
-      return this;
-    }
+    Precondition.Builder condition(Condition condition);
 
-    public Builder filter(RelationshipFilter val) {
-      filter = val;
-      return this;
-    }
+    Precondition.Builder filter(RelationshipFilter filter);
 
-    public Precondition build() {
-      return new Precondition(this);
-    }
+    Precondition build();
   }
 }

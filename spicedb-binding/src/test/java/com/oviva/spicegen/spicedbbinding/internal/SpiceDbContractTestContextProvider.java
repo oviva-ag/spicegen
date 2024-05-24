@@ -6,17 +6,23 @@ import com.authzed.grpcutil.BearerToken;
 import com.oviva.spicegen.spicedbbinding.test.GenericTypedParameterResolver;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import java.io.File;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.extension.*;
-import org.testcontainers.containers.DockerComposeContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.startupcheck.OneShotStartupCheckStrategy;
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.utility.DockerImageName;
 
 public class SpiceDbContractTestContextProvider implements TestTemplateInvocationContextProvider {
 
+  private static Logger logger = LoggerFactory.getLogger(SpiceDbContractTestContextProvider.class);
   private static final String TOKEN = "t0ken";
   private static final int GRPC_PORT = 50051;
 
@@ -35,14 +41,10 @@ public class SpiceDbContractTestContextProvider implements TestTemplateInvocatio
   private TestTemplateInvocationContext inMemorySpiceDB() {
 
     var spicedb =
-        new GenericContainer<>(DockerImageName.parse("quay.io/authzed/spicedb:v1.32.0"))
-            .withCommand("serve", "--grpc-preshared-key", TOKEN)
-            .withExposedPorts(
-                GRPC_PORT, // grpc
-                8080, // dashboard
-                9090 // metrics
-                );
-
+        createSpicedbBaseContainer("serve", "--grpc-preshared-key", TOKEN)
+            .withExposedPorts(GRPC_PORT)
+            .waitingFor(
+                new LogMessageWaitStrategy().withRegEx(".*\"grpc server started serving\".*"));
     spicedb.start();
 
     var host = spicedb.getHost();
@@ -61,22 +63,45 @@ public class SpiceDbContractTestContextProvider implements TestTemplateInvocatio
 
   private TestTemplateInvocationContext postgresSpiceDB() {
 
-    var spiceDbServiceName = "spicedb_1";
-    var environment =
-        new DockerComposeContainer<>(new File("src/main/docker/compose.dev.yaml"))
-            .withExposedService(spiceDbServiceName, GRPC_PORT);
+    var net = Network.newNetwork();
 
-    environment.start();
+    var migrator =
+        createSpicedbBaseContainer(
+                "migrate",
+                "head",
+                "--datastore-engine",
+                "postgres",
+                "--datastore-conn-uri",
+                "postgres://spicedb-pg:5432/spicedb?sslmode=disable&user=postgres&password=root")
+            .withStartupCheckStrategy(
+                new OneShotStartupCheckStrategy().withTimeout(Duration.ofSeconds(5)))
+            .withNetwork(net);
 
-    var host = environment.getServiceHost(spiceDbServiceName, GRPC_PORT);
-    var port = environment.getServicePort(spiceDbServiceName, GRPC_PORT);
+    var spicedb = createPostgeresSpicedbContainer(net);
+
+    var db =
+        new PostgreSQLContainer<>(DockerImageName.parse("postgres").withTag("14"))
+            .withDatabaseName("spicedb")
+            .withPassword("root")
+            .withUsername("postgres")
+            .withNetworkAliases("spicedb-pg")
+            .withNetwork(net);
+
+    db.start();
+    migrator.start();
+    spicedb.start();
+
+    var host = spicedb.getHost();
+    var port = spicedb.getMappedPort(GRPC_PORT);
     var services = createServices(host, port);
     return createContext(
         "postgres backed SpiceDB",
         services,
         () -> {
           quitelyShutdown(services.channel());
-          environment.stop();
+          migrator.stop();
+          spicedb.stop();
+          db.stop();
         });
   }
 
@@ -111,6 +136,29 @@ public class SpiceDbContractTestContextProvider implements TestTemplateInvocatio
                 });
       }
     };
+  }
+
+  private GenericContainer<?> createPostgeresSpicedbContainer(Network net) {
+
+    return createSpicedbBaseContainer(
+            "serve",
+            "--grpc-preshared-key=%s".formatted(TOKEN),
+            "--datastore-engine=postgres",
+            "--datastore-conn-uri=postgres://spicedb-pg:5432/spicedb?sslmode=disable&user=postgres&password=root")
+        .waitingFor(new LogMessageWaitStrategy().withRegEx(".*\"grpc server started serving\".*"))
+        .withExposedPorts(
+            GRPC_PORT, // grpc
+            8080, // dashboard
+            9090 // metrics
+            )
+        .withNetwork(net);
+  }
+
+  private GenericContainer<?> createSpicedbBaseContainer(String... args) {
+
+    return new GenericContainer<>(DockerImageName.parse("quay.io/authzed/spicedb:v1.32.0"))
+        .withCommand(args)
+        .withLogConsumer(f -> logger.info("spicedb {}: {}", args[0], f.getUtf8String()));
   }
 
   public TestServices createServices(String host, int port) {

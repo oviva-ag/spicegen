@@ -1,57 +1,25 @@
 package com.oviva.spicegen.api;
 
-import java.util.Objects;
+import com.oviva.spicegen.api.internal.ConsistencyImpl;
 
-public final class Consistency {
+public interface Consistency {
 
-  private static Consistency FULLY_CONSISTENT = new Consistency(Requirement.FULLY_CONSISTENT, null);
-  private final Requirement requirement;
+  String consistencyToken();
 
-  private final String consistencyToken;
+  Requirement requirement();
 
-  private Consistency(Requirement requirement, String consistencyToken) {
-    this.requirement = requirement;
-    this.consistencyToken = consistencyToken;
+  static Consistency fullyConsistent() {
+    return ConsistencyImpl.fullyConsistent();
   }
 
-  public String consistencyToken() {
-    return consistencyToken;
-  }
-
-  public Requirement requirement() {
-    return requirement;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    var that = (Consistency) o;
-    return requirement == that.requirement
-        && Objects.equals(consistencyToken, that.consistencyToken);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(requirement, consistencyToken);
-  }
-
-  public static Consistency fullyConsistent() {
-    return FULLY_CONSISTENT;
-  }
-
-  public static Consistency atLeastAsFreshAs(String consistencyToken) {
+  static Consistency atLeastAsFreshAs(String consistencyToken) {
     if (consistencyToken == null) {
-      return FULLY_CONSISTENT;
+      return ConsistencyImpl.fullyConsistent();
     }
-    return new Consistency(Requirement.AT_LEAST_AS_FRESH, consistencyToken);
+    return new ConsistencyImpl(Consistency.Requirement.AT_LEAST_AS_FRESH, consistencyToken);
   }
 
-  public enum Requirement {
+  enum Requirement {
     FULLY_CONSISTENT,
     AT_LEAST_AS_FRESH
   }
