@@ -19,6 +19,11 @@ jobs:
           java-version: 17
           distribution: 'temurin'
           cache: 'maven'
-      - name: Run unit tests
+      - name: Build and test
+        run: mvn -B verify
+      - name: Sonar Report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn test
+          mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
