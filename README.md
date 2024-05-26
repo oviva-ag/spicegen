@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=oviva-ag_spicegen&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=oviva-ag_spicegen)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=oviva-ag_spicegen&metric=coverage)](https://sonarcloud.io/summary/new_code?id=oviva-ag_spicegen)
 # SpiceDB Client Generator
 
 - Bored of copy & pasting strings from your SpiceDB schema into your client code?
