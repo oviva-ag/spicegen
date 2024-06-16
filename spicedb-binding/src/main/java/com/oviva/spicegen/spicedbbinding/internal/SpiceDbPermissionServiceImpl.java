@@ -2,20 +2,26 @@ package com.oviva.spicegen.spicedbbinding.internal;
 
 import com.authzed.api.v1.*;
 import com.oviva.spicegen.api.*;
-import com.oviva.spicegen.api.Consistency;
 import com.oviva.spicegen.api.PermissionService;
 import io.grpc.StatusRuntimeException;
 
 public class SpiceDbPermissionServiceImpl implements PermissionService {
-  private final UpdateRelationshipMapper updateRelationshipMapper = new UpdateRelationshipMapper();
+
   private final PreconditionMapper preconditionMapper = new PreconditionMapper();
+
+  private final ObjectReferenceMapper objectReferenceMapper = new ObjectReferenceMapper();
+  private final SubjectReferenceMapper subjectReferenceMapper = new SubjectReferenceMapper();
+  private final ConsistencyMapper consistencyMapper = new ConsistencyMapper();
+
+  private final UpdateRelationshipMapper updateRelationshipMapper =
+      new UpdateRelationshipMapper(objectReferenceMapper, subjectReferenceMapper);
+
+  private final CheckPermissionMapper checkPermissionMapper =
+      new CheckPermissionMapper(consistencyMapper, objectReferenceMapper, subjectReferenceMapper);
 
   private final PermissionsServiceGrpc.PermissionsServiceBlockingStub permissionsService;
 
   private final GrpcExceptionMapper exceptionMapper = new GrpcExceptionMapper();
-
-  private final ObjectReferenceMapper objectReferenceMapper = new ObjectReferenceMapper();
-  private final SubjectReferenceMapper subjectReferenceMapper = new SubjectReferenceMapper();
 
   public SpiceDbPermissionServiceImpl(
       PermissionsServiceGrpc.PermissionsServiceBlockingStub permissionsService) {
@@ -47,7 +53,7 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
   @Override
   public boolean checkPermission(CheckPermission checkPermission) {
 
-    var request = mapCheckPermission(checkPermission);
+    var request = checkPermissionMapper.map(checkPermission);
 
     try {
       var response = permissionsService.checkPermission(request);
@@ -56,29 +62,5 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
     } catch (StatusRuntimeException e) {
       throw exceptionMapper.map(e);
     }
-  }
-
-  private CheckPermissionRequest mapCheckPermission(CheckPermission checkPermission) {
-
-    var consistency = mapConsistency(checkPermission.consistency());
-
-    return CheckPermissionRequest.newBuilder()
-        .setConsistency(consistency)
-        .setResource(objectReferenceMapper.map(checkPermission.resource()))
-        .setSubject(subjectReferenceMapper.map(checkPermission.subject()))
-        .setPermission(checkPermission.permission())
-        .build();
-  }
-
-  private com.authzed.api.v1.Consistency mapConsistency(Consistency consistency) {
-    return switch (consistency.requirement()) {
-      case FULLY_CONSISTENT ->
-          com.authzed.api.v1.Consistency.newBuilder().setFullyConsistent(true).build();
-      case AT_LEAST_AS_FRESH ->
-          com.authzed.api.v1.Consistency.newBuilder()
-              .setAtLeastAsFresh(
-                  ZedToken.newBuilder().setToken(consistency.consistencyToken()).build())
-              .build();
-    };
   }
 }

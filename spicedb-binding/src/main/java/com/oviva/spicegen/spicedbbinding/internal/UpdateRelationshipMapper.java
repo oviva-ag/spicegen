@@ -6,8 +6,14 @@ import com.oviva.spicegen.api.UpdateRelationship;
 
 public class UpdateRelationshipMapper {
 
-  private final ObjectReferenceMapper objectReferenceMapper = new ObjectReferenceMapper();
-  private final SubjectReferenceMapper subjectReferenceMapper = new SubjectReferenceMapper();
+  private final ObjectReferenceMapper objectReferenceMapper;
+  private final SubjectReferenceMapper subjectReferenceMapper;
+
+  public UpdateRelationshipMapper(
+      ObjectReferenceMapper objectReferenceMapper, SubjectReferenceMapper subjectReferenceMapper) {
+    this.objectReferenceMapper = objectReferenceMapper;
+    this.subjectReferenceMapper = subjectReferenceMapper;
+  }
 
   public RelationshipUpdate map(UpdateRelationship updateRelationship) {
 

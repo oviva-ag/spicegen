@@ -15,7 +15,8 @@ class UpdateRelationshipMapperTest {
   private static final String ADMINISTRATOR = "administrator";
   private static final String ID = "9392";
 
-  private final UpdateRelationshipMapper mapper = new UpdateRelationshipMapper();
+  private final UpdateRelationshipMapper mapper =
+      new UpdateRelationshipMapper(new ObjectReferenceMapper(), new SubjectReferenceMapper());
 
   @Test
   void test_mapper_withUpdateOperation() {
