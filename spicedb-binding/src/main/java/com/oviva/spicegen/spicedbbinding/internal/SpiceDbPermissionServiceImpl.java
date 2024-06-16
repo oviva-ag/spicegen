@@ -1,8 +1,9 @@
 package com.oviva.spicegen.spicedbbinding.internal;
 
-import com.authzed.api.v1.Core;
-import com.authzed.api.v1.PermissionsServiceGrpc;
+import com.authzed.api.v1.*;
 import com.oviva.spicegen.api.*;
+import com.oviva.spicegen.api.Consistency;
+import com.oviva.spicegen.api.PermissionService;
 import io.grpc.StatusRuntimeException;
 
 public class SpiceDbPermissionServiceImpl implements PermissionService {
@@ -29,7 +30,7 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
         updates.preconditions().stream().map(preconditionMapper::map).toList();
 
     var req =
-        com.authzed.api.v1.PermissionService.WriteRelationshipsRequest.newBuilder()
+        WriteRelationshipsRequest.newBuilder()
             .addAllOptionalPreconditions(mappedPreconditions)
             .addAllUpdates(mappedUpdates)
             .build();
@@ -51,19 +52,17 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
     try {
       var response = permissionsService.checkPermission(request);
       return response.getPermissionship()
-          == com.authzed.api.v1.PermissionService.CheckPermissionResponse.Permissionship
-              .PERMISSIONSHIP_HAS_PERMISSION;
+          == CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
     } catch (StatusRuntimeException e) {
       throw exceptionMapper.map(e);
     }
   }
 
-  private com.authzed.api.v1.PermissionService.CheckPermissionRequest mapCheckPermission(
-      CheckPermission checkPermission) {
+  private CheckPermissionRequest mapCheckPermission(CheckPermission checkPermission) {
 
     var consistency = mapConsistency(checkPermission.consistency());
 
-    return com.authzed.api.v1.PermissionService.CheckPermissionRequest.newBuilder()
+    return CheckPermissionRequest.newBuilder()
         .setConsistency(consistency)
         .setResource(objectReferenceMapper.map(checkPermission.resource()))
         .setSubject(subjectReferenceMapper.map(checkPermission.subject()))
@@ -71,16 +70,14 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
         .build();
   }
 
-  private com.authzed.api.v1.PermissionService.Consistency mapConsistency(Consistency consistency) {
+  private com.authzed.api.v1.Consistency mapConsistency(Consistency consistency) {
     return switch (consistency.requirement()) {
       case FULLY_CONSISTENT ->
-          com.authzed.api.v1.PermissionService.Consistency.newBuilder()
-              .setFullyConsistent(true)
-              .build();
+          com.authzed.api.v1.Consistency.newBuilder().setFullyConsistent(true).build();
       case AT_LEAST_AS_FRESH ->
-          com.authzed.api.v1.PermissionService.Consistency.newBuilder()
+          com.authzed.api.v1.Consistency.newBuilder()
               .setAtLeastAsFresh(
-                  Core.ZedToken.newBuilder().setToken(consistency.consistencyToken()).build())
+                  ZedToken.newBuilder().setToken(consistency.consistencyToken()).build())
               .build();
     };
   }

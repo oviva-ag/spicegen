@@ -3,7 +3,7 @@ package com.oviva.spicegen.spicedbbinding.internal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.authzed.api.v1.Core;
+import com.authzed.api.v1.RelationshipUpdate;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.UpdateRelationship;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class UpdateRelationshipMapperTest {
     var updateRelationship = UpdateRelationship.ofUpdate(resource, ADMINISTRATOR, subject);
     var map = mapper.map(updateRelationship);
 
-    assertEquals(map.getOperation(), Core.RelationshipUpdate.Operation.OPERATION_TOUCH);
+    assertEquals(map.getOperation(), RelationshipUpdate.Operation.OPERATION_TOUCH);
     assertNotNull(map.getRelationship());
     assertEquals(map.getRelationship().getRelation(), ADMINISTRATOR);
     assertEquals(map.getRelationship().getResource().getObjectId(), ID);
@@ -42,7 +42,7 @@ public class UpdateRelationshipMapperTest {
     var updateRelationship = UpdateRelationship.ofDelete(resource, ADMINISTRATOR, subject);
     var map = mapper.map(updateRelationship);
 
-    assertEquals(map.getOperation(), Core.RelationshipUpdate.Operation.OPERATION_DELETE);
+    assertEquals(map.getOperation(), RelationshipUpdate.Operation.OPERATION_DELETE);
     assertNotNull(map.getRelationship());
     assertEquals(map.getRelationship().getRelation(), ADMINISTRATOR);
     assertEquals(map.getRelationship().getResource().getObjectId(), ID);

@@ -1,8 +1,6 @@
 package com.oviva.spicegen.spicedbbinding.internal;
 
-import com.authzed.api.v1.Core;
-import com.authzed.api.v1.PermissionService;
-import com.authzed.api.v1.SchemaServiceOuterClass;
+import com.authzed.api.v1.*;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.SubjectRef;
 import java.util.UUID;
@@ -18,43 +16,39 @@ public class SpiceDbUtils {
     return UUID.randomUUID().toString().replaceAll("-", "");
   }
 
-  public static Core.ObjectReference toRef(ObjectRef ref) {
+  public static ObjectReference toRef(ObjectRef ref) {
 
-    return Core.ObjectReference.newBuilder()
-        .setObjectType(ref.kind())
-        .setObjectId(ref.id())
+    return ObjectReference.newBuilder().setObjectType(ref.kind()).setObjectId(ref.id()).build();
+  }
+
+  public static SubjectReference toRef(SubjectRef ref) {
+
+    return SubjectReference.newBuilder()
+        .setObject(ObjectReference.newBuilder().setObjectId(ref.id()).setObjectType(ref.kind()))
         .build();
   }
 
-  public static Core.SubjectReference toRef(SubjectRef ref) {
-
-    return Core.SubjectReference.newBuilder()
-        .setObject(
-            Core.ObjectReference.newBuilder().setObjectId(ref.id()).setObjectType(ref.kind()))
-        .build();
-  }
-
-  public static PermissionService.WriteRelationshipsRequest updateRelationshipRequest(
+  public static WriteRelationshipsRequest updateRelationshipRequest(
       ObjectRef resource, String relation, ObjectRef subject) {
 
     logger.info("update: " + resource.toString() + "#" + relation + "@" + subject);
     return writeRelationshipRequest(
-        resource, relation, subject, Core.RelationshipUpdate.Operation.OPERATION_TOUCH);
+        resource, relation, subject, RelationshipUpdate.Operation.OPERATION_TOUCH);
   }
 
-  public static PermissionService.WriteRelationshipsRequest deleteRelationshipRequest(
+  public static WriteRelationshipsRequest deleteRelationshipRequest(
       ObjectRef resource, String relation, ObjectRef subject) {
 
     logger.info("delete: " + resource.toString() + "#" + relation + "@" + subject);
     return writeRelationshipRequest(
-        resource, relation, subject, Core.RelationshipUpdate.Operation.OPERATION_DELETE);
+        resource, relation, subject, RelationshipUpdate.Operation.OPERATION_DELETE);
   }
 
-  public static PermissionService.WriteRelationshipsRequest writeRelationshipRequest(
+  public static WriteRelationshipsRequest writeRelationshipRequest(
       ObjectRef resource,
       String relation,
       ObjectRef subject,
-      Core.RelationshipUpdate.Operation operation) {
+      RelationshipUpdate.Operation operation) {
 
     logger.info("write: " + resource.toString() + "#" + relation + "@" + subject);
 
@@ -62,40 +56,39 @@ public class SpiceDbUtils {
 
     var resourceRef = toRef(resource);
 
-    return PermissionService.WriteRelationshipsRequest.newBuilder()
+    return WriteRelationshipsRequest.newBuilder()
         .addUpdates(
-            Core.RelationshipUpdate.newBuilder()
+            RelationshipUpdate.newBuilder()
                 .setOperation(operation)
                 .setRelationship(
-                    Core.Relationship.newBuilder()
+                    Relationship.newBuilder()
                         .setRelation(relation)
-                        .setSubject(
-                            Core.SubjectReference.newBuilder().setObject(subjectRef).build())
+                        .setSubject(SubjectReference.newBuilder().setObject(subjectRef).build())
                         .setResource(resourceRef))
                 .build())
         .build();
   }
 
-  public static SchemaServiceOuterClass.WriteSchemaRequest writeSchemaRequest(String schema) {
-    return SchemaServiceOuterClass.WriteSchemaRequest.newBuilder().setSchema(schema).build();
+  public static WriteSchemaRequest writeSchemaRequest(String schema) {
+    return WriteSchemaRequest.newBuilder().setSchema(schema).build();
   }
 
-  public static PermissionService.CheckPermissionRequest checkPermissionRequest(
+  public static CheckPermissionRequest checkPermissionRequest(
       ObjectRef resource, String permission, SubjectRef subject) {
 
-    return PermissionService.CheckPermissionRequest.newBuilder()
-        .setConsistency(PermissionService.Consistency.newBuilder().setFullyConsistent(true).build())
+    return CheckPermissionRequest.newBuilder()
+        .setConsistency(Consistency.newBuilder().setFullyConsistent(true).build())
         .setResource(toRef(resource))
         .setPermission(permission)
         .setSubject(toRef(subject))
         .build();
   }
 
-  public static PermissionService.LookupResourcesRequest lookupResourcesRequest(
+  public static LookupResourcesRequest lookupResourcesRequest(
       String resourceType, String permission, SubjectRef subject) {
 
-    return PermissionService.LookupResourcesRequest.newBuilder()
-        .setConsistency(PermissionService.Consistency.newBuilder().setFullyConsistent(true).build())
+    return LookupResourcesRequest.newBuilder()
+        .setConsistency(Consistency.newBuilder().setFullyConsistent(true).build())
         .setResourceObjectType(resourceType)
         .setPermission(permission)
         .setSubject(toRef(subject))

@@ -1,16 +1,17 @@
 package com.oviva.spicegen.spicedbbinding.internal;
 
-import com.authzed.api.v1.Core;
+import com.authzed.api.v1.ObjectReference;
+import com.authzed.api.v1.SubjectReference;
 import com.oviva.spicegen.api.SubjectRef;
 
 public class SubjectReferenceMapper {
 
-  public Core.SubjectReference map(SubjectRef subjectRef) {
+  public SubjectReference map(SubjectRef subjectRef) {
     var ref =
-        Core.ObjectReference.newBuilder()
+        ObjectReference.newBuilder()
             .setObjectType(subjectRef.kind())
             .setObjectId(subjectRef.id())
             .build();
-    return Core.SubjectReference.newBuilder().setObject(ref).build();
+    return SubjectReference.newBuilder().setObject(ref).build();
   }
 }
