@@ -31,7 +31,7 @@ public class SpiceDbUtils {
   public static WriteRelationshipsRequest updateRelationshipRequest(
       ObjectRef resource, String relation, ObjectRef subject) {
 
-    logger.info("update: " + resource.toString() + "#" + relation + "@" + subject);
+    logger.info("update: {}#{}@{}", resource.toString(), relation, subject);
     return writeRelationshipRequest(
         resource, relation, subject, RelationshipUpdate.Operation.OPERATION_TOUCH);
   }
@@ -39,7 +39,7 @@ public class SpiceDbUtils {
   public static WriteRelationshipsRequest deleteRelationshipRequest(
       ObjectRef resource, String relation, ObjectRef subject) {
 
-    logger.info("delete: " + resource.toString() + "#" + relation + "@" + subject);
+    logger.info("delete: {}#{}@{}", resource.toString(), relation, subject);
     return writeRelationshipRequest(
         resource, relation, subject, RelationshipUpdate.Operation.OPERATION_DELETE);
   }

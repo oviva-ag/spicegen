@@ -8,7 +8,7 @@ import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.UpdateRelationship;
 import org.junit.jupiter.api.Test;
 
-public class UpdateRelationshipMapperTest {
+class UpdateRelationshipMapperTest {
 
   private static final String TENANT = "tenant";
   private static final String USER = "user";
@@ -18,7 +18,7 @@ public class UpdateRelationshipMapperTest {
   private final UpdateRelationshipMapper mapper = new UpdateRelationshipMapper();
 
   @Test
-  public void test_mapper_withUpdateOperation() {
+  void test_mapper_withUpdateOperation() {
 
     var resource = ObjectRef.of(TENANT, ID);
     var subject = ObjectRef.of(USER, ID);
@@ -26,15 +26,15 @@ public class UpdateRelationshipMapperTest {
     var updateRelationship = UpdateRelationship.ofUpdate(resource, ADMINISTRATOR, subject);
     var map = mapper.map(updateRelationship);
 
-    assertEquals(map.getOperation(), RelationshipUpdate.Operation.OPERATION_TOUCH);
+    assertEquals(RelationshipUpdate.Operation.OPERATION_TOUCH, map.getOperation());
     assertNotNull(map.getRelationship());
-    assertEquals(map.getRelationship().getRelation(), ADMINISTRATOR);
-    assertEquals(map.getRelationship().getResource().getObjectId(), ID);
-    assertEquals(map.getRelationship().getResource().getObjectType(), TENANT);
+    assertEquals(ADMINISTRATOR, map.getRelationship().getRelation());
+    assertEquals(ID, map.getRelationship().getResource().getObjectId());
+    assertEquals(TENANT, map.getRelationship().getResource().getObjectType());
   }
 
   @Test
-  public void test_mapper_withDeleteOperation() {
+  void test_mapper_withDeleteOperation() {
 
     var resource = ObjectRef.of(TENANT, ID);
     var subject = ObjectRef.of(USER, ID);
@@ -42,10 +42,10 @@ public class UpdateRelationshipMapperTest {
     var updateRelationship = UpdateRelationship.ofDelete(resource, ADMINISTRATOR, subject);
     var map = mapper.map(updateRelationship);
 
-    assertEquals(map.getOperation(), RelationshipUpdate.Operation.OPERATION_DELETE);
+    assertEquals(RelationshipUpdate.Operation.OPERATION_DELETE, map.getOperation());
     assertNotNull(map.getRelationship());
-    assertEquals(map.getRelationship().getRelation(), ADMINISTRATOR);
-    assertEquals(map.getRelationship().getResource().getObjectId(), ID);
-    assertEquals(map.getRelationship().getResource().getObjectType(), TENANT);
+    assertEquals(ADMINISTRATOR, map.getRelationship().getRelation());
+    assertEquals(ID, map.getRelationship().getResource().getObjectId());
+    assertEquals(TENANT, map.getRelationship().getResource().getObjectType());
   }
 }

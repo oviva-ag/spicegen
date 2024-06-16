@@ -14,7 +14,7 @@ class SubjectRefTest {
     var user = SubjectRef.ofObject(ObjectRef.of("user", uuid.toString()));
 
     assertEquals(user.id(), uuid.toString());
-    assertEquals(user.kind(), "user");
+    assertEquals("user", user.kind());
   }
 
   @Test

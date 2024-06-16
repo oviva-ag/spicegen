@@ -17,22 +17,6 @@ public record CheckPermissionImpl(
     return new Builder();
   }
 
-  public ObjectRef resource() {
-    return resource;
-  }
-
-  public String permission() {
-    return permission;
-  }
-
-  public SubjectRef subject() {
-    return subject;
-  }
-
-  public Consistency consistency() {
-    return consistency;
-  }
-
   public static final class Builder implements CheckPermission.Builder {
     private ObjectRef resource;
     private String permission;

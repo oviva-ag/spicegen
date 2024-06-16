@@ -67,9 +67,9 @@ public class UpdateRelationshipsTest {
             .update(updateRelationship)
             .build();
 
-    assertEquals(updateRelationships.updates().size(), 1);
+    assertEquals(1, updateRelationships.updates().size());
     assertEquals(updateRelationships.updates().get(0), updateRelationship);
-    assertEquals(updateRelationships.preconditions().size(), 1);
+    assertEquals(1, updateRelationships.preconditions().size());
     assertEquals(updateRelationships.preconditions().get(0), precondition);
   }
 

@@ -14,14 +14,6 @@ public record UpdateRelationshipsImpl(
     return new Builder();
   }
 
-  public List<UpdateRelationship> updates() {
-    return updates;
-  }
-
-  public List<Precondition> preconditions() {
-    return preconditions;
-  }
-
   public static final class Builder implements UpdateRelationships.Builder {
     private List<Precondition> preconditions = new ArrayList<>();
     private List<UpdateRelationship> updates = new ArrayList<>();
