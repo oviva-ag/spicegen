@@ -3,10 +3,7 @@ package com.oviva.spicegen.spicedbbinding.internal;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.authzed.api.v1.Core;
-import com.authzed.api.v1.PermissionService;
-import com.authzed.api.v1.PermissionsServiceGrpc;
-import com.authzed.api.v1.SchemaServiceGrpc;
+import com.authzed.api.v1.*;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.SubjectRef;
 import com.oviva.spicegen.spicedbbinding.test.Fixtures;
@@ -158,25 +155,25 @@ class SpiceDbContractTest {
     var req = SpiceDbUtils.checkPermissionRequest(resource, permission, subject);
     var res = permissionsService.checkPermission(req);
     return res.getPermissionship()
-        == PermissionService.CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
+        == CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
   }
 
   private String updateRelationship(ObjectRef resource, String relation, ObjectRef subject) {
     return writeRelationship(
-        resource, relation, subject, Core.RelationshipUpdate.Operation.OPERATION_TOUCH);
+        resource, relation, subject, RelationshipUpdate.Operation.OPERATION_TOUCH);
   }
 
   private String deleteRelationship(ObjectRef resource, String relation, ObjectRef subject) {
 
     return writeRelationship(
-        resource, relation, subject, Core.RelationshipUpdate.Operation.OPERATION_DELETE);
+        resource, relation, subject, RelationshipUpdate.Operation.OPERATION_DELETE);
   }
 
   private String writeRelationship(
       ObjectRef resource,
       String relation,
       ObjectRef subject,
-      Core.RelationshipUpdate.Operation operation) {
+      RelationshipUpdate.Operation operation) {
 
     var req = SpiceDbUtils.writeRelationshipRequest(resource, relation, subject, operation);
     var res = permissionsService.writeRelationships(req);

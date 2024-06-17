@@ -24,8 +24,8 @@ class UpdateRelationshipTest {
 
     var updateRelationship = UpdateRelationship.ofUpdate(resource, ADMINISTRATOR, subject);
 
-    assertEquals(updateRelationship.operation(), UpdateRelationship.Operation.UPDATE);
-    assertEquals(updateRelationship.relation(), ADMINISTRATOR);
+    assertEquals(UpdateRelationship.Operation.UPDATE, updateRelationship.operation());
+    assertEquals(ADMINISTRATOR, updateRelationship.relation());
     assertEquals(updateRelationship.resource(), resource);
     assertEquals(updateRelationship.subject(), SubjectRef.ofObject(subject));
   }
@@ -38,8 +38,8 @@ class UpdateRelationshipTest {
 
     var updateRelationship = UpdateRelationship.ofDelete(resource, ADMINISTRATOR, subject);
 
-    assertEquals(updateRelationship.operation(), UpdateRelationship.Operation.DELETE);
-    assertEquals(updateRelationship.relation(), ADMINISTRATOR);
+    assertEquals(UpdateRelationship.Operation.DELETE, updateRelationship.operation());
+    assertEquals(ADMINISTRATOR, updateRelationship.relation());
     assertEquals(updateRelationship.resource(), resource);
     assertEquals(updateRelationship.subject(), SubjectRef.ofObject(subject));
   }

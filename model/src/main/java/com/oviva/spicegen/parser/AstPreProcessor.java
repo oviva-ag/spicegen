@@ -82,8 +82,7 @@ public class AstPreProcessor {
 
   private String determineTarget() {
 
-    var target = "%s_%s".formatted(determineOs(), determineArch());
-    return target;
+    return "%s_%s".formatted(determineOs(), determineArch());
   }
 
   private String determineArch() {

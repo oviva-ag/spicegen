@@ -18,10 +18,6 @@ public record RelationshipFilterImpl(
         Optional.ofNullable(builder.subjectFilter));
   }
 
-  public String resourceKind() {
-    return resourceKind;
-  }
-
   public record SubjectFilterImpl(
       String subjectKind, Optional<String> subjectId, Optional<String> relation)
       implements SubjectFilter {
@@ -31,10 +27,6 @@ public record RelationshipFilterImpl(
           builder.subjectKind,
           Optional.ofNullable(builder.subjectId),
           Optional.ofNullable(builder.relation));
-    }
-
-    public String subjectKind() {
-      return subjectKind;
     }
 
     public static final class Builder implements SubjectFilter.Builder {

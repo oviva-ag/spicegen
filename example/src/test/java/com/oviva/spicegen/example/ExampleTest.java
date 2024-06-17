@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.authzed.api.v1.SchemaServiceGrpc;
-import com.authzed.api.v1.SchemaServiceOuterClass;
+import com.authzed.api.v1.WriteSchemaRequest;
 import com.authzed.grpcutil.BearerToken;
 import com.oviva.spicegen.api.*;
 import com.oviva.spicegen.permissions.refs.DocumentRef;
@@ -26,7 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class ExampleTest {
+class ExampleTest {
 
   private static final int GRPC_PORT = 50051;
   private static final String TOKEN = "t0ken";
@@ -75,8 +75,7 @@ public class ExampleTest {
     var schemaService =
         SchemaServiceGrpc.newBlockingStub(channel).withCallCredentials(new BearerToken(TOKEN));
 
-    schemaService.writeSchema(
-        SchemaServiceOuterClass.WriteSchemaRequest.newBuilder().setSchema(loadSchema()).build());
+    schemaService.writeSchema(WriteSchemaRequest.newBuilder().setSchema(loadSchema()).build());
   }
 
   @Test

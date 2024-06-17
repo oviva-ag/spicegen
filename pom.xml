@@ -74,7 +74,7 @@
         <mockito.jupiter.version>${mockito.version}</mockito.jupiter.version>
         <mockito.version>5.11.0</mockito.version>
         <testcontainers.version>1.19.7</testcontainers.version>
-        <authzed.version>0.7.0</authzed.version>
+        <authzed.version>0.8.0</authzed.version>
 
         <spotless.maven.plugin.version>2.43.0</spotless.maven.plugin.version>
         <jacoco.version>0.8.12</jacoco.version>
