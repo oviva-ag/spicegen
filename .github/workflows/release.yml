@@ -41,9 +41,10 @@ jobs:
         working-directory: parser
         run: make build
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn --batch-mode -Prelease deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
