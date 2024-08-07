@@ -41,7 +41,9 @@ jobs:
         working-directory: parser
         run: make build
       - name: Publish package
-        run: mvn --batch-mode -Prelease deploy
+        run: |
+          echo -n "$MAVEN_GPG_KEY" | gpg --import --batch
+          mvn --batch-mode -Prelease deploy
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
