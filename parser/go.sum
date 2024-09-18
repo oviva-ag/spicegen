@@ -1,5 +1,5 @@
-github.com/authzed/spicedb v1.33.1 h1:xv2MTyCuaGvJfP4KXXpt9TaVmnyyJzHP6wn0IBx9DZ8=
-github.com/authzed/spicedb v1.33.1/go.mod h1:nYYRk+VeH559jKqSKNr70Uh64Sc9vdLjNQTGZtfeHQc=
+github.com/authzed/spicedb v1.35.3 h1:t9GzliJVJVV5a3J82D48zvtzgGP/cRCZCDLnKb7lRVQ=
+github.com/authzed/spicedb v1.35.3/go.mod h1:Odx6XL4AQcUrlcd5Af718xN/pUhkXZivs0GDGxHYgTw=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
