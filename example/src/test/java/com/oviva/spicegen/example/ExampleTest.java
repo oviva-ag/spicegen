@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -35,9 +35,9 @@ class ExampleTest {
 
   @Container
   private GenericContainer<?> spicedb =
-      new GenericContainer<>(DockerImageName.parse("quay.io/authzed/spicedb:v1.32.0"))
+      new GenericContainer<>(DockerImageName.parse("authzed/spicedb:v1.41.0"))
           .withCommand("serve", "--grpc-preshared-key", TOKEN)
-          .waitingFor(new LogMessageWaitStrategy().withRegEx(".*\"grpc server started serving\".*"))
+          .waitingFor(Wait.forLogMessage(".*\"grpc server started serving\".*", 1))
           .withLogConsumer(f -> logger.info("spicedb: {}", f.getUtf8String()))
           .withExposedPorts(
               GRPC_PORT, // grpc
