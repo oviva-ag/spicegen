@@ -18,6 +18,7 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.startupcheck.OneShotStartupCheckStrategy;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 public class SpiceDbContractTestContextProvider implements TestTemplateInvocationContextProvider {
@@ -145,7 +146,7 @@ public class SpiceDbContractTestContextProvider implements TestTemplateInvocatio
             "--grpc-preshared-key=%s".formatted(TOKEN),
             "--datastore-engine=postgres",
             "--datastore-conn-uri=postgres://spicedb-pg:5432/spicedb?sslmode=disable&user=postgres&password=root")
-        .waitingFor(new LogMessageWaitStrategy().withRegEx(".*\"grpc server started serving\".*"))
+        .waitingFor(Wait.forLogMessage(".*\"grpc server started serving\".*", 1))
         .withExposedPorts(
             GRPC_PORT, // grpc
             8080, // dashboard
@@ -156,7 +157,7 @@ public class SpiceDbContractTestContextProvider implements TestTemplateInvocatio
 
   private GenericContainer<?> createSpicedbBaseContainer(String... args) {
 
-    return new GenericContainer<>(DockerImageName.parse("quay.io/authzed/spicedb:v1.32.0"))
+    return new GenericContainer<>(DockerImageName.parse("authzed/spicedb:v1.41.0"))
         .withCommand(args)
         .withLogConsumer(f -> logger.info("spicedb {}: {}", args[0], f.getUtf8String()));
   }
