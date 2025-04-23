@@ -1,3 +1,4 @@
+![Maven Central Version](https://img.shields.io/maven-central/v/com.oviva.spicegen/api)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=oviva-ag_spicegen&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=oviva-ag_spicegen)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=oviva-ag_spicegen&metric=coverage)](https://sonarcloud.io/summary/new_code?id=oviva-ag_spicegen)
 # SpiceDB Client Generator
@@ -25,9 +26,7 @@ This is a Java generator for SpiceDB schemas which generates:
 Example `pom.xml`
 
 ```xml
-...
-        <!-- `repository` &` pluginRepository` definitions according to GitHub package -->
-        ...
+<!-- ... -->
 <dependencies>
     <dependency>
         <groupId>com.oviva.spicegen</groupId>
@@ -35,7 +34,7 @@ Example `pom.xml`
         <version>${spicegen.version}</version>
     </dependency>
 </dependencies>
-        ...
+<!-- ... -->
 <plugins>
 <plugin>
     <groupId>com.oviva.spicegen</groupId>
