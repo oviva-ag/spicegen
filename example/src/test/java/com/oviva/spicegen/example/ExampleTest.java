@@ -9,6 +9,7 @@ import com.authzed.grpcutil.BearerToken;
 import com.oviva.spicegen.api.*;
 import com.oviva.spicegen.permissions.refs.DocumentRef;
 import com.oviva.spicegen.permissions.refs.FolderRef;
+import com.oviva.spicegen.permissions.refs.TeamRef;
 import com.oviva.spicegen.permissions.refs.UserRef;
 import com.oviva.spicegen.spicedbbinding.SpiceDbPermissionServiceBuilder;
 import io.grpc.ManagedChannel;
@@ -84,6 +85,8 @@ class ExampleTest {
 
     // typesafe object references!
     var user = UserRef.ofLong(userId);
+    var user2 = UserRef.ofLong(42);
+    var team = TeamRef.ofLong(42);
     var folder = FolderRef.of("home");
     var document = DocumentRef.ofLong(48);
 
@@ -93,6 +96,8 @@ class ExampleTest {
             UpdateRelationships.newBuilder()
                 // note the generated factory methods!
                 .update(folder.createReaderUser(user))
+                .update(team.createMemberUser(user2))
+                .update(folder.createReaderTeamMember(team))
                 .update(document.createParentFolderFolder(folder))
                 .build());
 
@@ -103,6 +108,11 @@ class ExampleTest {
         permissionService.checkPermission(
             document.checkRead(
                 SubjectRef.ofObject(user), Consistency.atLeastAsFreshAs(consistencyToken))));
+
+    assertTrue(
+        permissionService.checkPermission(
+            document.checkRead(
+                SubjectRef.ofObject(user2), Consistency.atLeastAsFreshAs(consistencyToken))));
   }
 
   private String loadSchema() {
