@@ -109,10 +109,21 @@ class ExampleTest {
             document.checkRead(
                 SubjectRef.ofObject(user), Consistency.atLeastAsFreshAs(consistencyToken))));
 
-    assertTrue(
-        permissionService.checkPermission(
-            document.checkRead(
-                SubjectRef.ofObject(user2), Consistency.atLeastAsFreshAs(consistencyToken))));
+
+    // EXAMPLE: checking multiple permissions
+    var checkPermissions =
+        permissionService.checkPermissions(
+            CheckPermissions.newBuilder()
+                .checkPermission(
+                    document.checkRead(SubjectRef.ofObject(user), Consistency.fullyConsistent()))
+                .checkPermission(
+                    folder.checkRead(SubjectRef.ofObject(UserRef.ofLong(42)), Consistency.minimizeLatency()))
+                .build());
+
+    assertEquals(2, checkPermissions.size());
+    assertTrue(checkPermissions.get(0).permissionGranted());
+    assertFalse(checkPermissions.get(1).permissionGranted());
+
   }
 
   private String loadSchema() {
