@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class CheckPermissionsTest {
+class CheckBulkPermissionsTest {
 
   @Test
   void test_build_success() {
@@ -20,8 +20,8 @@ class CheckPermissionsTest {
     var subjectRef = SubjectRef.ofObject(ObjectRef.of(namespace, id));
 
     var checkPermissions =
-        CheckPermissions.newBuilder()
-            .checkPermissions(
+        CheckBulkPermissions.newBuilder()
+            .checkBulkPermissions(
                 List.of(
                     CheckPermission.newBuilder()
                         .consistency(Consistency.atLeastAsFreshAs(consistencyToken))
@@ -46,9 +46,9 @@ class CheckPermissionsTest {
     assertEquals(h1, h2);
   }
 
-  private CheckPermissions createChecks(String... subjectId) {
+  private CheckBulkPermissions createChecks(String... subjectId) {
 
-    var checkPermissions = CheckPermissions.newBuilder();
+    var checkPermissions = CheckBulkPermissions.newBuilder();
 
     for (String id : subjectId) {
       checkPermissions.checkPermission(

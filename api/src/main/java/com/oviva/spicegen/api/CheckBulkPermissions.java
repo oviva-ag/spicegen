@@ -15,6 +15,8 @@ public interface CheckBulkPermissions {
 
   interface Builder {
 
+    Builder item(CheckBulkPermissionItem item);
+
     Builder items(List<CheckBulkPermissionItem> items);
 
     Builder consistency(Consistency consistency);

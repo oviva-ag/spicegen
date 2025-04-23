@@ -1,6 +1,6 @@
 package com.oviva.spicegen.api;
 
-public interface CheckPermissionsResult {
+public interface CheckBulkPermissionsResult {
   boolean permissionGranted();
 
   CheckPermission request();

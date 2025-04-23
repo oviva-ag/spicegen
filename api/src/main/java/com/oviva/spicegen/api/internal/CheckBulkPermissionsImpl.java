@@ -1,6 +1,7 @@
 package com.oviva.spicegen.api.internal;
 
 import com.oviva.spicegen.api.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public record CheckBulkPermissionsImpl(List<CheckBulkPermissionItem> items, Consistency consistency)
@@ -15,12 +16,18 @@ public record CheckBulkPermissionsImpl(List<CheckBulkPermissionItem> items, Cons
   }
 
   public static final class Builder implements CheckBulkPermissions.Builder {
-    private List<CheckBulkPermissionItem> items = List.of();
+    private List<CheckBulkPermissionItem> items = new ArrayList<>()
     private Consistency consistency = Consistency.fullyConsistent();
 
     @Override
     public CheckBulkPermissions.Builder items(List<CheckBulkPermissionItem> items) {
       this.items = items;
+      return this;
+    }
+
+    @Override
+    public CheckBulkPermissions.Builder item(CheckBulkPermissionItem item) {
+      this.items.add(item);
       return this;
     }
 

@@ -70,7 +70,7 @@ class SpiceDbPermissionServiceImplTest {
   }
 
   @Test
-  void checkPermissions() {
+  void checkBulkPermissions() {
 
     var stub = mock(PermissionsServiceGrpc.PermissionsServiceBlockingStub.class);
     var sut = new SpiceDbPermissionServiceImpl(stub);
@@ -102,8 +102,8 @@ class SpiceDbPermissionServiceImplTest {
 
     // when
     var got =
-        sut.checkPermissions(
-            CheckPermissions.newBuilder()
+        sut.checkBulkPermissions(
+            CheckBulkPermissions.newBuilder()
                 .checkPermission(
                     CheckPermission.newBuilder()
                         .permission(permission1)

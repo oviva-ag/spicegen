@@ -111,8 +111,8 @@ class ExampleTest {
 
     // EXAMPLE: checking multiple permissions
     var checkPermissions =
-        permissionService.checkPermissions(
-            CheckPermissions.newBuilder()
+        permissionService.checkBulkPermissions(
+            CheckBulkPermissions.newBuilder()
                 .checkPermission(
                     document.checkRead(SubjectRef.ofObject(user), Consistency.fullyConsistent()))
                 .checkPermission(
