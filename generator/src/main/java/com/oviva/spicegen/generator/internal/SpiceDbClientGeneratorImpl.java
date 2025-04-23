@@ -160,6 +160,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
       addUpdateMethods(typedRefBuilder, definition);
 
       addCheckMethods(typedRefBuilder, definition);
+      addBulkCheckMethods(typedRefBuilder, definition);
 
       typedRef = typedRefBuilder.build();
       writeSource(typedRef, ".refs");
@@ -192,6 +193,33 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                   permission.name(),
                   subjectParamName,
                   consistencyParamName)
+              .build());
+    }
+  }
+
+  private void addBulkCheckMethods(TypeSpec.Builder typeRefBuilder, ObjectDefinition definition) {
+    for (Permission permission : definition.permissions()) {
+
+      var permissionName = TextUtils.toPascalCase(permission.name());
+      var checkMethod = "checkBulk" + permissionName;
+
+      var subjectParamName = "subject";
+
+      typeRefBuilder.addMethod(
+          MethodSpec.methodBuilder(checkMethod)
+              .addModifiers(Modifier.PUBLIC)
+              .addParameter(ClassName.get(SubjectRef.class), subjectParamName)
+              .returns(ClassName.get(CheckBulkPermissionItem.class))
+              .addCode(
+                  """
+                                if ($L == null) {
+                                 throw new IllegalArgumentException("subject must not be null");
+                                }
+                                return CheckBulkPermissionItem.newBuilder().resource(this).permission($S).subject($L).build();
+                              """,
+                  subjectParamName,
+                  permission.name(),
+                  subjectParamName)
               .build());
     }
   }
