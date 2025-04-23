@@ -24,8 +24,10 @@ class SpiceDbPermissionServiceImplTest {
         UpdateRelationships.newBuilder().update(UpdateRelationship.ofUpdate(o, "owner", s)).build();
 
     var token = "atXyz";
-    var res = WriteRelationshipsResponse.newBuilder()
-        .setWrittenAt(ZedToken.newBuilder().setToken(token).build()).build();
+    var res =
+        WriteRelationshipsResponse.newBuilder()
+            .setWrittenAt(ZedToken.newBuilder().setToken(token).build())
+            .build();
     when(stub.writeRelationships(any())).thenReturn(res);
 
     // when
@@ -47,21 +49,25 @@ class SpiceDbPermissionServiceImplTest {
     var o = ObjectRef.of("file", "/test.txt");
     var s = SubjectRef.ofObject(ObjectRef.of("user", "bob"));
 
-    var res = CheckPermissionResponse.newBuilder()
-        .setPermissionship(CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION)
-        .build();
+    var res =
+        CheckPermissionResponse.newBuilder()
+            .setPermissionship(CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION)
+            .build();
     when(stub.checkPermission(any())).thenReturn(res);
 
     // when
-    var got = sut.checkPermission(
-        CheckPermission.newBuilder().permission(permission).consistency(consistency).resource(o)
-            .subject(s).build());
+    var got =
+        sut.checkPermission(
+            CheckPermission.newBuilder()
+                .permission(permission)
+                .consistency(consistency)
+                .resource(o)
+                .subject(s)
+                .build());
 
     // then
     assertTrue(got);
   }
-
-
 
   @Test
   void checkPermissions() {
@@ -75,29 +81,42 @@ class SpiceDbPermissionServiceImplTest {
     var o = ObjectRef.of("file", "/test.txt");
     var s = SubjectRef.ofObject(ObjectRef.of("user", "bob"));
 
-    var res = CheckBulkPermissionsResponse.newBuilder().addPairs(
-            CheckBulkPermissionsPair.newBuilder().setItem(CheckBulkPermissionsResponseItem.newBuilder()
-                .setPermissionship(
-                    CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION))).addPairs(
-            CheckBulkPermissionsPair.newBuilder().setItem(CheckBulkPermissionsResponseItem.newBuilder()
-                .setPermissionship(CheckPermissionResponse.Permissionship.PERMISSIONSHIP_NO_PERMISSION)))
-        .build();
+    var res =
+        CheckBulkPermissionsResponse.newBuilder()
+            .addPairs(
+                CheckBulkPermissionsPair.newBuilder()
+                    .setItem(
+                        CheckBulkPermissionsResponseItem.newBuilder()
+                            .setPermissionship(
+                                CheckPermissionResponse.Permissionship
+                                    .PERMISSIONSHIP_HAS_PERMISSION)))
+            .addPairs(
+                CheckBulkPermissionsPair.newBuilder()
+                    .setItem(
+                        CheckBulkPermissionsResponseItem.newBuilder()
+                            .setPermissionship(
+                                CheckPermissionResponse.Permissionship
+                                    .PERMISSIONSHIP_NO_PERMISSION)))
+            .build();
     when(stub.checkBulkPermissions(any())).thenReturn(res);
 
     // when
-    var got = sut.checkPermissions(CheckPermissions.newBuilder().checkPermission(
-            CheckPermission.newBuilder()
-                .permission(permission1)
-                .resource(o)
-                .subject(s)
-                .build())
-        .checkPermission(
-            CheckPermission.newBuilder()
-                .permission(permission2)
-                .resource(o)
-                .subject(s)
-                .build())
-        .build());
+    var got =
+        sut.checkPermissions(
+            CheckPermissions.newBuilder()
+                .checkPermission(
+                    CheckPermission.newBuilder()
+                        .permission(permission1)
+                        .resource(o)
+                        .subject(s)
+                        .build())
+                .checkPermission(
+                    CheckPermission.newBuilder()
+                        .permission(permission2)
+                        .resource(o)
+                        .subject(s)
+                        .build())
+                .build());
 
     // then
     assertEquals(2, got.size());

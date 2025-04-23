@@ -1,10 +1,10 @@
 package com.oviva.spicegen.api;
 
-import java.util.List;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class CheckPermissionsTest {
 
@@ -21,14 +21,14 @@ class CheckPermissionsTest {
 
     var checkPermissions =
         CheckPermissions.newBuilder()
-            .checkPermissions(List.of(
-                CheckPermission.newBuilder()
-                    .consistency(Consistency.atLeastAsFreshAs(consistencyToken))
-                    .permission(permission)
-                    .resource(objectRef)
-                    .subject(subjectRef)
-                    .build()
-            ))
+            .checkPermissions(
+                List.of(
+                    CheckPermission.newBuilder()
+                        .consistency(Consistency.atLeastAsFreshAs(consistencyToken))
+                        .permission(permission)
+                        .resource(objectRef)
+                        .subject(subjectRef)
+                        .build()))
             .build();
 
     assertEquals(1, checkPermissions.checkPermissions().size());
@@ -51,8 +51,8 @@ class CheckPermissionsTest {
     var checkPermissions = CheckPermissions.newBuilder();
 
     for (String id : subjectId) {
-      checkPermissions
-          .checkPermission(CheckPermission.newBuilder()
+      checkPermissions.checkPermission(
+          CheckPermission.newBuilder()
               .resource(ObjectRef.of("tenant", "1"))
               .subject(SubjectRef.ofObject(ObjectRef.of("user", id)))
               .permission("test")

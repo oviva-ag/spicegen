@@ -36,11 +36,9 @@ public class CheckPermissionMapper {
         .build();
   }
 
-
   public CheckBulkPermissionsRequest mapBulk(List<CheckPermission> checkPermissions) {
     // make sure all consistency tokens are the same, or default to fully consistent
-    var requestBuilder =
-        CheckBulkPermissionsRequest.newBuilder();
+    var requestBuilder = CheckBulkPermissionsRequest.newBuilder();
     var consistency = Optional.<Consistency>empty();
     for (var checkPermission : checkPermissions) {
       if (consistency.isEmpty()) {
@@ -49,11 +47,11 @@ public class CheckPermissionMapper {
       if (!Objects.equals(checkPermission.consistency(), consistency.get())) {
         consistency = Optional.of(Consistency.fullyConsistent());
       }
-        requestBuilder.addItems(
-            CheckBulkPermissionsRequestItem.newBuilder()
-                .setResource(objectReferenceMapper.map(checkPermission.resource()))
-                .setSubject(subjectReferenceMapper.map(checkPermission.subject()))
-                .setPermission(checkPermission.permission()));
+      requestBuilder.addItems(
+          CheckBulkPermissionsRequestItem.newBuilder()
+              .setResource(objectReferenceMapper.map(checkPermission.resource()))
+              .setSubject(subjectReferenceMapper.map(checkPermission.subject()))
+              .setPermission(checkPermission.permission()));
     }
     consistency.map(consistencyMapper::map).ifPresent(requestBuilder::setConsistency);
     return requestBuilder.build();

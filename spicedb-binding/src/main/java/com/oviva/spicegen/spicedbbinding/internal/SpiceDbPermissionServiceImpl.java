@@ -79,10 +79,12 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
       var results = new ArrayList<CheckPermissionsResult>(response.getPairsCount());
       for (var i = 0; i < response.getPairsList().size(); i++) {
         var checkBulkPermissionsPair = response.getPairs(i);
-        var permissionGranted = checkBulkPermissionsPair.getItem().getPermissionship() ==
-                                CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
-        results.add(new CheckPermissionsResultImpl(permissionGranted,
-            checkPermissions.checkPermissions().get(i)));
+        var permissionGranted =
+            checkBulkPermissionsPair.getItem().getPermissionship()
+                == CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
+        results.add(
+            new CheckPermissionsResultImpl(
+                permissionGranted, checkPermissions.checkPermissions().get(i)));
       }
       return results;
     } catch (StatusRuntimeException e) {

@@ -25,9 +25,8 @@ public interface PermissionService {
 
   /**
    * This is a batch version of
-   * @see  PermissionService#checkPermission(CheckPermission)
    *
-   *
+   * @see PermissionService#checkPermission(CheckPermission)
    * @param checkPermissions the request
    * @return list of results, one for each checkPermission request
    */
