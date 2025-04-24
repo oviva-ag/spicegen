@@ -15,6 +15,7 @@ class UpdateRelationshipTest {
   private static final String DOCUMENT_ID = "138";
   private static final String ADMINISTRATOR = "administrator";
   private static final String NAMESPACE_ID = "9392";
+  private static final String OPTIONAL_RELATIONSHIP = "boss";
 
   @Test
   void test_ofUpdate() {
@@ -31,6 +32,21 @@ class UpdateRelationshipTest {
   }
 
   @Test
+  void test_ofUpdate_WithSubjectRef() {
+
+    var resource = ObjectRef.of(TENANT, NAMESPACE_ID);
+    var subject =
+        SubjectRef.ofObjectWithRelation(ObjectRef.of(TENANT, NAMESPACE_ID), OPTIONAL_RELATIONSHIP);
+
+    var updateRelationship = UpdateRelationship.ofUpdate(resource, ADMINISTRATOR, subject);
+
+    assertEquals(UpdateRelationship.Operation.UPDATE, updateRelationship.operation());
+    assertEquals(ADMINISTRATOR, updateRelationship.relation());
+    assertEquals(updateRelationship.resource(), resource);
+    assertEquals(updateRelationship.subject(), subject);
+  }
+
+  @Test
   void test_ofDelete() {
 
     var resource = ObjectRef.of(TENANT, NAMESPACE_ID);
@@ -42,6 +58,21 @@ class UpdateRelationshipTest {
     assertEquals(ADMINISTRATOR, updateRelationship.relation());
     assertEquals(updateRelationship.resource(), resource);
     assertEquals(updateRelationship.subject(), SubjectRef.ofObject(subject));
+  }
+
+  @Test
+  void test_ofDelete_WithSubjectRef() {
+
+    var resource = ObjectRef.of(TENANT, NAMESPACE_ID);
+    var subject =
+        SubjectRef.ofObjectWithRelation(ObjectRef.of(TENANT, NAMESPACE_ID), OPTIONAL_RELATIONSHIP);
+
+    var updateRelationship = UpdateRelationship.ofDelete(resource, ADMINISTRATOR, subject);
+
+    assertEquals(UpdateRelationship.Operation.DELETE, updateRelationship.operation());
+    assertEquals(ADMINISTRATOR, updateRelationship.relation());
+    assertEquals(updateRelationship.resource(), resource);
+    assertEquals(updateRelationship.subject(), subject);
   }
 
   @Test
@@ -140,8 +171,20 @@ class UpdateRelationshipTest {
   }
 
   @Test
+  void ofWithRelation_toString() {
+    var obj = ObjectRef.of("document", "4");
+    var sub = ObjectRef.of("user", "18");
+    var relation = "owner";
+
+    var u =
+        UpdateRelationship.ofUpdate(
+            obj, relation, SubjectRef.ofObjectWithRelation(sub, OPTIONAL_RELATIONSHIP));
+    assertEquals("UPDATE(document:4#owner@user:18#boss)", u.toString());
+  }
+
+  @Test
   void of_toString_null() {
-    var u = UpdateRelationship.ofUpdate(null, null, null);
+    var u = UpdateRelationship.ofUpdate(null, null, (ObjectRef) null);
     assertEquals("UPDATE(#@)", u.toString());
   }
 }

@@ -1,7 +1,12 @@
 definition user {}
 
+definition team {
+	relation member: user
+}
+
+
 definition folder {
-    relation reader: user
+    relation reader: user | team#member
     permission read = reader
 }
 

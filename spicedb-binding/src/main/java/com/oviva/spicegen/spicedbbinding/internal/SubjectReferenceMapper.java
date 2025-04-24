@@ -12,6 +12,10 @@ public class SubjectReferenceMapper {
             .setObjectType(subjectRef.kind())
             .setObjectId(subjectRef.id())
             .build();
-    return SubjectReference.newBuilder().setObject(ref).build();
+    var builder = SubjectReference.newBuilder().setObject(ref);
+    if (subjectRef.relation() != null) {
+      builder.setOptionalRelation(subjectRef.relation());
+    }
+    return builder.build();
   }
 }

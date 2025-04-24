@@ -9,6 +9,15 @@ import org.junit.jupiter.api.Test;
 class SubjectRefTest {
 
   @Test
+  void ofWithRelation() {
+    var user = SubjectRef.ofObjectWithRelation(ObjectRef.of("user", "123"), "reader");
+
+    assertEquals("123", user.id());
+    assertEquals("user", user.kind());
+    assertEquals("reader", user.relation());
+  }
+
+  @Test
   void ofUser() {
     var uuid = UUID.fromString("20162b05-fbc5-4567-853f-7ad90fc29d25");
     var user = SubjectRef.ofObject(ObjectRef.of("user", uuid.toString()));

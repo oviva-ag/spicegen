@@ -203,18 +203,15 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
       var relationCamelCase = TextUtils.toPascalCase(relation.name());
 
       for (ObjectTypeRef allowedObject : relation.allowedObjects()) {
-        if (allowedObject.relationship() != null) {
-          logger.info(
-              "skipping update util for {}.{}#{}, can't deal with relationships on allowed objects",
-              definition.name(),
-              allowedObject.typeName(),
-              allowedObject.relationship());
-          continue;
-        }
-
+        var relationshipName =
+            allowedObject.relationship() == null ? "" : toPascalCase(allowedObject.relationship());
         // add create
         var createMethod =
-            "create" + relationCamelCase + TextUtils.toPascalCase(allowedObject.typeName());
+            "create%s%s%s"
+                .formatted(
+                    relationCamelCase,
+                    TextUtils.toPascalCase(allowedObject.typeName()),
+                    relationshipName);
 
         // TODO magic ref
         var typeRefName = toPascalCase(allowedObject.typeName()) + "Ref";
@@ -229,16 +226,22 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                                 if ($L == null) {
                                  throw new IllegalArgumentException("ref must not be null");
                                 }
-                                return $T.ofUpdate(this, $S, $L);
+                                return $T.ofUpdate(this, $S, $T.ofObjectWithRelation($L, $S));
                                 """,
                     "ref",
                     updateRelationshipTypeName,
                     relation.name(),
-                    "ref")
+                    SubjectRef.class,
+                    "ref",
+                    allowedObject.relationship())
                 .build());
 
         var deleteMethod =
-            "delete" + relationCamelCase + TextUtils.toPascalCase(allowedObject.typeName());
+            "delete%s%s%s"
+                .formatted(
+                    relationCamelCase,
+                    TextUtils.toPascalCase(allowedObject.typeName()),
+                    relationshipName);
 
         typeRefBuilder.addMethod(
             MethodSpec.methodBuilder(deleteMethod)
@@ -250,12 +253,13 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                                             if ($L == null) {
                                              throw new IllegalArgumentException("ref must not be null");
                                             }
-                                            return $T.ofDelete(this, $S, $L);
+                                            return $T.ofDelete(this, $S, SubjectRef.ofObjectWithRelation($L, $S));
                                             """,
                     "ref",
                     updateRelationshipTypeName,
                     relation.name(),
-                    "ref")
+                    "ref",
+                    allowedObject.relationship())
                 .build());
       }
     }
