@@ -226,7 +226,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                                 if ($L == null) {
                                  throw new IllegalArgumentException("ref must not be null");
                                 }
-                                return $T.ofUpdate(this, $S, $T.ofObject($L, $S));
+                                return $T.ofUpdate(this, $S, $T.ofObjectWithRelation($L, $S));
                                 """,
                     "ref",
                     updateRelationshipTypeName,
@@ -253,7 +253,7 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                                             if ($L == null) {
                                              throw new IllegalArgumentException("ref must not be null");
                                             }
-                                            return $T.ofDelete(this, $S, SubjectRef.ofObject($L, $S));
+                                            return $T.ofDelete(this, $S, SubjectRef.ofObjectWithRelation($L, $S));
                                             """,
                     "ref",
                     updateRelationshipTypeName,
