@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class CheckBulkPermissionsTest {
@@ -21,21 +22,20 @@ class CheckBulkPermissionsTest {
 
     var checkPermissions =
         CheckBulkPermissions.newBuilder()
-            .checkBulkPermissions(
+            .items(
                 List.of(
-                    CheckPermission.newBuilder()
-                        .consistency(Consistency.atLeastAsFreshAs(consistencyToken))
+                    CheckBulkPermissionItem.newBuilder()
                         .permission(permission)
                         .resource(objectRef)
                         .subject(subjectRef)
                         .build()))
             .build();
 
-    assertEquals(1, checkPermissions.checkPermissions().size());
-    CheckPermission firstCheckPermission = checkPermissions.checkPermissions().get(0);
+    assertEquals(1, checkPermissions.items().size());
+    var firstCheckPermission = checkPermissions.items().get(0);
     assertEquals(permission, firstCheckPermission.permission());
-    assertEquals(objectRef, checkPermissions.checkPermissions().get(0).resource());
-    assertEquals(subjectRef, checkPermissions.checkPermissions().get(0).subject());
+    assertEquals(objectRef, checkPermissions.items().get(0).resource());
+    assertEquals(subjectRef, checkPermissions.items().get(0).subject());
   }
 
   @Test
@@ -51,8 +51,9 @@ class CheckBulkPermissionsTest {
     var checkPermissions = CheckBulkPermissions.newBuilder();
 
     for (String id : subjectId) {
-      checkPermissions.checkPermission(
-          CheckPermission.newBuilder()
+      Assertions.assertNotNull(CheckBulkPermissionItem.newBuilder());
+      checkPermissions.item(
+          CheckBulkPermissionItem.newBuilder()
               .resource(ObjectRef.of("tenant", "1"))
               .subject(SubjectRef.ofObject(ObjectRef.of("user", id)))
               .permission("test")

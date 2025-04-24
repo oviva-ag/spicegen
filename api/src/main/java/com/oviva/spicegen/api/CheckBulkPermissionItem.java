@@ -1,9 +1,11 @@
 package com.oviva.spicegen.api;
 
+import com.oviva.spicegen.api.internal.CheckBulkPermissionItemImpl;
+
 public interface CheckBulkPermissionItem {
 
   static Builder newBuilder() {
-    return null;
+    return new CheckBulkPermissionItemImpl.Builder();
   }
 
   ObjectRef resource();

@@ -104,14 +104,14 @@ class SpiceDbPermissionServiceImplTest {
     var got =
         sut.checkBulkPermissions(
             CheckBulkPermissions.newBuilder()
-                .checkPermission(
-                    CheckPermission.newBuilder()
+                .item(
+                    CheckBulkPermissionItem.newBuilder()
                         .permission(permission1)
                         .resource(o)
                         .subject(s)
                         .build())
-                .checkPermission(
-                    CheckPermission.newBuilder()
+                .item(
+                    CheckBulkPermissionItem.newBuilder()
                         .permission(permission2)
                         .resource(o)
                         .subject(s)

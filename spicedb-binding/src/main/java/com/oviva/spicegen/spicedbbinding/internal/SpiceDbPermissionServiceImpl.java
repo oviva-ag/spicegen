@@ -68,12 +68,13 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public List<CheckBulkPermissionsResult> checkBulkPermissions(CheckBulkPermissions checkBulkPermissions) {
-    var request = checkPermissionMapper.mapBulk(checkBulkPermissions.checkPermissions());
+  public List<CheckBulkPermissionsResult> checkBulkPermissions(
+      CheckBulkPermissions checkBulkPermissions) {
+    var request = checkPermissionMapper.mapBulk(checkBulkPermissions);
 
     try {
       var response = permissionsService.checkBulkPermissions(request);
-      if (response.getPairsCount() != checkBulkPermissions.checkPermissions().size()) {
+      if (response.getPairsCount() != checkBulkPermissions.items().size()) {
         throw new ClientException("Amount of response pairs does not match request");
       }
       var results = new ArrayList<CheckBulkPermissionsResult>(response.getPairsCount());
@@ -83,8 +84,7 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
             checkBulkPermissionsPair.getItem().getPermissionship()
                 == CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
         results.add(
-            new CheckPermissionsResultImpl(
-                permissionGranted, checkBulkPermissions.checkPermissions().get(i)));
+            new CheckPermissionsResultImpl(permissionGranted, checkBulkPermissions.items().get(i)));
       }
       return results;
     } catch (StatusRuntimeException e) {

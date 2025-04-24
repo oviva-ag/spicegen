@@ -3,7 +3,7 @@ package com.oviva.spicegen.api;
 public interface CheckBulkPermissionsResult {
   boolean permissionGranted();
 
-  CheckPermission request();
+  CheckBulkPermissionItem request();
 
   default String permission() {
     return request().permission();

@@ -3,11 +3,8 @@ package com.oviva.spicegen.spicedbbinding.internal;
 import com.authzed.api.v1.CheckBulkPermissionsRequest;
 import com.authzed.api.v1.CheckBulkPermissionsRequestItem;
 import com.authzed.api.v1.CheckPermissionRequest;
+import com.oviva.spicegen.api.CheckBulkPermissions;
 import com.oviva.spicegen.api.CheckPermission;
-import com.oviva.spicegen.api.Consistency;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 public class CheckPermissionMapper {
 
@@ -36,24 +33,17 @@ public class CheckPermissionMapper {
         .build();
   }
 
-  public CheckBulkPermissionsRequest mapBulk(List<CheckPermission> checkPermissions) {
+  public CheckBulkPermissionsRequest mapBulk(CheckBulkPermissions checkBulkPermissions) {
     // make sure all consistency tokens are the same, or default to fully consistent
-    var requestBuilder = CheckBulkPermissionsRequest.newBuilder();
-    var consistency = Optional.<Consistency>empty();
-    for (var checkPermission : checkPermissions) {
-      if (consistency.isEmpty()) {
-        consistency = Optional.of(checkPermission.consistency());
-      }
-      if (!Objects.equals(checkPermission.consistency(), consistency.get())) {
-        consistency = Optional.of(Consistency.fullyConsistent());
-      }
+    var consistency = consistencyMapper.map(checkBulkPermissions.consistency());
+    var requestBuilder = CheckBulkPermissionsRequest.newBuilder().setConsistency(consistency);
+    for (var checkPermission : checkBulkPermissions.items()) {
       requestBuilder.addItems(
           CheckBulkPermissionsRequestItem.newBuilder()
               .setResource(objectReferenceMapper.map(checkPermission.resource()))
               .setSubject(subjectReferenceMapper.map(checkPermission.subject()))
               .setPermission(checkPermission.permission()));
     }
-    consistency.map(consistencyMapper::map).ifPresent(requestBuilder::setConsistency);
     return requestBuilder.build();
   }
 }

@@ -16,7 +16,7 @@ public record CheckBulkPermissionsImpl(List<CheckBulkPermissionItem> items, Cons
   }
 
   public static final class Builder implements CheckBulkPermissions.Builder {
-    private List<CheckBulkPermissionItem> items = new ArrayList<>()
+    private List<CheckBulkPermissionItem> items = new ArrayList<>();
     private Consistency consistency = Consistency.fullyConsistent();
 
     @Override

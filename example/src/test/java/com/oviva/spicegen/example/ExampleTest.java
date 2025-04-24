@@ -113,11 +113,9 @@ class ExampleTest {
     var checkPermissions =
         permissionService.checkBulkPermissions(
             CheckBulkPermissions.newBuilder()
-                .checkPermission(
-                    document.checkRead(SubjectRef.ofObject(user), Consistency.fullyConsistent()))
-                .checkPermission(
-                    folder.checkRead(
-                        SubjectRef.ofObject(UserRef.ofLong(42)), Consistency.minimizeLatency()))
+                .item(document.checkBulkRead(SubjectRef.ofObject(user)))
+                .item(folder.checkBulkRead(SubjectRef.ofObject(UserRef.ofLong(42))))
+                .consistency(Consistency.atLeastAsFreshAs(consistencyToken))
                 .build());
 
     assertEquals(2, checkPermissions.size());
