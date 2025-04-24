@@ -2,15 +2,34 @@ package com.oviva.spicegen.generator.internal;
 
 import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
 
-import com.oviva.spicegen.api.*;
+import com.oviva.spicegen.api.CheckPermission;
+import com.oviva.spicegen.api.Consistency;
+import com.oviva.spicegen.api.LookupSuspects;
+import com.oviva.spicegen.api.ObjectRef;
+import com.oviva.spicegen.api.ObjectRefFactory;
+import com.oviva.spicegen.api.SubjectRef;
+import com.oviva.spicegen.api.UpdateRelationship;
 import com.oviva.spicegen.generator.Options;
 import com.oviva.spicegen.generator.SpiceDbClientGenerator;
 import com.oviva.spicegen.generator.utils.TextUtils;
-import com.oviva.spicegen.model.*;
-import com.squareup.javapoet.*;
+import com.oviva.spicegen.model.ObjectDefinition;
+import com.oviva.spicegen.model.ObjectTypeRef;
+import com.oviva.spicegen.model.Permission;
+import com.oviva.spicegen.model.Relation;
+import com.oviva.spicegen.model.Schema;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeSpec.Builder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.UUID;
 import javax.lang.model.element.Modifier;
 import org.slf4j.Logger;
@@ -89,6 +108,16 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
   private void generateRefs(Schema spec) {
 
+    TypeSpec.Builder factories =
+        TypeSpec.classBuilder("ObjectRefFactories")
+            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            // private ctor to prevent instantiation
+            .addMethod(
+                MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PRIVATE)
+                    .addStatement("throw new AssertionError(\"No instances allowed\")")
+                    .build());
+
     for (ObjectDefinition definition : spec.definitions()) {
       var className = TextUtils.capitalize(TextUtils.toCamelCase(definition.name())) + "Ref";
       var typedRef = TypeSpec.classBuilder(className).build();
@@ -161,10 +190,69 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
       addCheckMethods(typedRefBuilder, definition);
       addBulkCheckMethods(typedRefBuilder, definition);
+      addLookupMethods(typedRefBuilder, definition);
 
       typedRef = typedRefBuilder.build();
       writeSource(typedRef, ".refs");
+      createFactoryInstance(ClassName.bestGuess(className), factories);
     }
+
+    TypeSpec factoriesClass = factories.build();
+
+    writeSource(factoriesClass, ".refs");
+  }
+
+  private static void createFactoryInstance(ClassName ref, Builder factories) {
+    ParameterizedTypeName factoryInterface =
+        ParameterizedTypeName.get(ClassName.get(ObjectRefFactory.class), ref);
+
+    TypeSpec impl =
+        TypeSpec.anonymousClassBuilder("")
+            .addSuperinterface(factoryInterface)
+            .addField(
+                FieldSpec.builder(
+                        String.class, "kind", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                    .initializer("$T.of(\"\").kind()", ref)
+                    .build())
+
+            // getRefClass()
+            .addMethod(
+                MethodSpec.methodBuilder("getRefClass")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(ParameterizedTypeName.get(ClassName.get(Class.class), ref))
+                    .addStatement("return $T.class", ref)
+                    .build())
+
+            // create(String id)
+            .addMethod(
+                MethodSpec.methodBuilder("create")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(String.class, "id")
+                    .returns(ref)
+                    .addStatement("return $T.of(id)", ref)
+                    .build())
+
+            // kind()
+            .addMethod(
+                MethodSpec.methodBuilder("kind")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(String.class)
+                    .addStatement("return kind")
+                    .build())
+            .build();
+
+    factories.addField(
+        FieldSpec.builder(
+                factoryInterface,
+                ref.simpleName().toUpperCase(),
+                Modifier.PUBLIC,
+                Modifier.STATIC,
+                Modifier.FINAL)
+            .initializer("$L", impl)
+            .build());
   }
 
   private void addCheckMethods(TypeSpec.Builder typeRefBuilder, ObjectDefinition definition) {
@@ -184,11 +272,11 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
               .returns(ClassName.get(CheckPermission.class))
               .addCode(
                   """
-                    if ($L == null) {
-                     throw new IllegalArgumentException("subject must not be null");
-                    }
-                    return CheckPermission.newBuilder().resource(this).permission($S).subject($L).consistency($L).build();
-                  """,
+                if ($L == null) {
+                 throw new IllegalArgumentException("subject must not be null");
+                }
+                return CheckPermission.newBuilder().resource(this).permission($S).subject($L).consistency($L).build();
+              """,
                   subjectParamName,
                   permission.name(),
                   subjectParamName,
@@ -224,6 +312,43 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
     }
   }
 
+  private void addLookupMethods(TypeSpec.Builder typeRefBuilder, ObjectDefinition definition) {
+    for (Permission permission : definition.permissions()) {
+
+      var allowedObjectTypes =
+          definition.relations().stream()
+              .flatMap(relation -> relation.allowedObjects().stream())
+              .filter(objectTypeRef -> objectTypeRef.relationship() == null)
+              .map(ObjectTypeRef::typeName)
+              .toList();
+
+      var permissionName = TextUtils.toPascalCase(permission.name());
+
+      for (String allowedObjectType : allowedObjectTypes) {
+
+        // TODO magic ref
+        String refType = toPascalCase(allowedObjectType);
+        var typeRefName = refType + "Ref";
+
+        ClassName className = ClassName.bestGuess(typeRefName);
+        var lookupMethodName = "lookup" + permissionName + refType;
+
+        typeRefBuilder.addMethod(
+            MethodSpec.methodBuilder(lookupMethodName)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(ParameterizedTypeName.get(ClassName.get(LookupSuspects.class), className))
+                .addCode(
+                    """
+                  return LookupSuspects.<$T>newBuilder().resource(this).permission($S).subjectType(ObjectRefFactories.$L).build();
+                """,
+                    className,
+                    permission.name(),
+                    className.simpleName().toUpperCase())
+                .build());
+      }
+    }
+  }
+
   private void addUpdateMethods(TypeSpec.Builder typeRefBuilder, ObjectDefinition definition) {
 
     for (Relation relation : definition.relations()) {
@@ -251,11 +376,11 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                 .returns(updateRelationshipTypeName)
                 .addCode(
                     """
-                                if ($L == null) {
-                                 throw new IllegalArgumentException("ref must not be null");
-                                }
-                                return $T.ofUpdate(this, $S, $T.ofObjectWithRelation($L, $S));
-                                """,
+                    if ($L == null) {
+                     throw new IllegalArgumentException("ref must not be null");
+                    }
+                    return $T.ofUpdate(this, $S, $T.ofObjectWithRelation($L, $S));
+                    """,
                     "ref",
                     updateRelationshipTypeName,
                     relation.name(),
@@ -278,11 +403,11 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                 .returns(ClassName.bestGuess("UpdateRelationship"))
                 .addCode(
                     """
-                                            if ($L == null) {
-                                             throw new IllegalArgumentException("ref must not be null");
-                                            }
-                                            return $T.ofDelete(this, $S, SubjectRef.ofObjectWithRelation($L, $S));
-                                            """,
+                    if ($L == null) {
+                     throw new IllegalArgumentException("ref must not be null");
+                    }
+                    return $T.ofDelete(this, $S, SubjectRef.ofObjectWithRelation($L, $S));
+                    """,
                     "ref",
                     updateRelationshipTypeName,
                     relation.name(),

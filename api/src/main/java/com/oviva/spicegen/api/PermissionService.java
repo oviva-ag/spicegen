@@ -2,6 +2,8 @@ package com.oviva.spicegen.api;
 
 import java.util.List;
 
+import java.util.Iterator;
+
 public interface PermissionService {
 
   /**
@@ -31,4 +33,6 @@ public interface PermissionService {
    * @return list of results, one for each checkPermission request
    */
   List<CheckBulkPermissionsResult> checkBulkPermissions(CheckBulkPermissions checkBulkPermissions);
+
+  <T extends ObjectRef> Iterator<T> lookupSubjects(LookupSuspects<T> lookupSuspects);
 }
