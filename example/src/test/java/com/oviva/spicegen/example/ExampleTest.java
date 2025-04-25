@@ -85,7 +85,7 @@ class ExampleTest {
 
     // typesafe object references!
     var user = UserRef.ofLong(userId);
-    var user2 = UserRef.ofLong(42);
+    var userInTeam = UserRef.ofLong(42);
     var team = TeamRef.ofLong(42);
     var folder = FolderRef.of("home");
     var document = DocumentRef.ofLong(48);
@@ -96,7 +96,7 @@ class ExampleTest {
             UpdateRelationships.newBuilder()
                 // note the generated factory methods!
                 .update(folder.createReaderUser(user))
-                .update(team.createMemberUser(user2))
+                .update(team.createMemberUser(userInTeam))
                 .update(folder.createReaderTeamMember(team))
                 .update(document.createParentFolderFolder(folder))
                 .build());
@@ -112,7 +112,20 @@ class ExampleTest {
     assertTrue(
         permissionService.checkPermission(
             document.checkRead(
-                SubjectRef.ofObject(user2), Consistency.atLeastAsFreshAs(consistencyToken))));
+                SubjectRef.ofObject(userInTeam), Consistency.atLeastAsFreshAs(consistencyToken))));
+
+    // EXAMPLE: checking multiple permissions
+    var checkPermissions =
+        permissionService.checkBulkPermissions(
+            CheckBulkPermissions.newBuilder()
+                .item(document.checkBulkRead(SubjectRef.ofObject(user)))
+                .item(folder.checkBulkRead(SubjectRef.ofObject(UserRef.of("non-existing"))))
+                .consistency(Consistency.atLeastAsFreshAs(consistencyToken))
+                .build());
+
+    assertEquals(2, checkPermissions.size());
+    assertTrue(checkPermissions.get(0).permissionGranted());
+    assertFalse(checkPermissions.get(1).permissionGranted());
   }
 
   private String loadSchema() {

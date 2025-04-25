@@ -3,7 +3,10 @@ package com.oviva.spicegen.spicedbbinding.internal;
 import com.authzed.api.v1.*;
 import com.oviva.spicegen.api.*;
 import com.oviva.spicegen.api.PermissionService;
+import com.oviva.spicegen.api.exceptions.ClientException;
 import io.grpc.StatusRuntimeException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpiceDbPermissionServiceImpl implements PermissionService {
 
@@ -59,6 +62,31 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
       var response = permissionsService.checkPermission(request);
       return response.getPermissionship()
           == CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
+    } catch (StatusRuntimeException e) {
+      throw exceptionMapper.map(e);
+    }
+  }
+
+  @Override
+  public List<CheckBulkPermissionsResult> checkBulkPermissions(
+      CheckBulkPermissions checkBulkPermissions) {
+    var request = checkPermissionMapper.mapBulk(checkBulkPermissions);
+
+    try {
+      var response = permissionsService.checkBulkPermissions(request);
+      if (response.getPairsCount() != checkBulkPermissions.items().size()) {
+        throw new ClientException("Amount of response pairs does not match request");
+      }
+      var results = new ArrayList<CheckBulkPermissionsResult>(response.getPairsCount());
+      for (var i = 0; i < response.getPairsList().size(); i++) {
+        var checkBulkPermissionsPair = response.getPairs(i);
+        var permissionGranted =
+            checkBulkPermissionsPair.getItem().getPermissionship()
+                == CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
+        results.add(
+            new CheckPermissionsResultImpl(permissionGranted, checkBulkPermissions.items().get(i)));
+      }
+      return results;
     } catch (StatusRuntimeException e) {
       throw exceptionMapper.map(e);
     }

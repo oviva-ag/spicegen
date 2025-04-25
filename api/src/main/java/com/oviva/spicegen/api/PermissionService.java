@@ -1,5 +1,7 @@
 package com.oviva.spicegen.api;
 
+import java.util.List;
+
 public interface PermissionService {
 
   /**
@@ -20,4 +22,13 @@ public interface PermissionService {
    * @return true it the subject is permitted, false otherwise
    */
   boolean checkPermission(CheckPermission checkPermission);
+
+  /**
+   * This is a batch version of
+   *
+   * @see PermissionService#checkPermission(CheckPermission)
+   * @param checkBulkPermissions the request
+   * @return list of results, one for each checkPermission request
+   */
+  List<CheckBulkPermissionsResult> checkBulkPermissions(CheckBulkPermissions checkBulkPermissions);
 }

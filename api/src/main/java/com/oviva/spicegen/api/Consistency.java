@@ -12,6 +12,10 @@ public interface Consistency {
     return ConsistencyImpl.fullyConsistent();
   }
 
+  static Consistency minimizeLatency() {
+    return ConsistencyImpl.minimizeLatency();
+  }
+
   static Consistency atLeastAsFreshAs(String consistencyToken) {
     if (consistencyToken == null) {
       return ConsistencyImpl.fullyConsistent();
@@ -21,6 +25,7 @@ public interface Consistency {
 
   enum Requirement {
     FULLY_CONSISTENT,
-    AT_LEAST_AS_FRESH
+    AT_LEAST_AS_FRESH,
+    MINIMIZE_LATENCY
   }
 }

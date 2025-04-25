@@ -14,6 +14,8 @@ public class ConsistencyMapper {
               .setAtLeastAsFresh(
                   ZedToken.newBuilder().setToken(consistency.consistencyToken()).build())
               .build();
+      case MINIMIZE_LATENCY ->
+          com.authzed.api.v1.Consistency.newBuilder().setMinimizeLatency(true).build();
     };
   }
 }
