@@ -330,11 +330,12 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
         ClassName className = ClassName.bestGuess(typeRefName);
         var relationshipName = Objects.requireNonNullElse(allowedObjectType.relationship(), "");
-        var lookupMethodName =
-            "lookup%s%s%s".formatted(permissionName, refType, toPascalCase(relationshipName));
+        var lookupSubjectsMethodName =
+            "lookupSubjects%s%s%s"
+                .formatted(permissionName, refType, toPascalCase(relationshipName));
 
         typeRefBuilder.addMethod(
-            MethodSpec.methodBuilder(lookupMethodName)
+            MethodSpec.methodBuilder(lookupSubjectsMethodName)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(ParameterizedTypeName.get(ClassName.get(LookupSuspects.class), className))
                 .addCode(
