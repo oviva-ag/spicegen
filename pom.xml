@@ -107,6 +107,7 @@
     <sonar.projectName>spicegen</sonar.projectName>
     <sonar.projectKey>oviva-ag_spicegen</sonar.projectKey>
     <sonar.moduleKey>${project.groupId}_${project.artifactId}</sonar.moduleKey>
+    <sonar.cpd.exclusions>**/com/oviva/spicegen/api/*</sonar.cpd.exclusions>
     <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco-ut/jacoco.xml,${project.build.directory}/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
