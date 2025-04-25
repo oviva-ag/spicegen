@@ -1,15 +1,16 @@
 package com.oviva.spicegen.api.internal;
 
 import com.oviva.spicegen.api.LookupSuspects;
+import com.oviva.spicegen.api.LookupSuspects.Builder;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.ObjectRefFactory;
 
 public record LookupSuspectsImpl<T extends ObjectRef>(
-    String permission, ObjectRef resource, ObjectRefFactory<T> subjectType)
+    String permission, ObjectRef resource, ObjectRefFactory<T> subjectType, String subjectRelation)
     implements LookupSuspects<T> {
 
   private LookupSuspectsImpl(Builder<T> builder) {
-    this(builder.permission, builder.resource, builder.subjectType);
+    this(builder.permission, builder.resource, builder.subjectType, builder.subjectRelation);
   }
 
   public static <T extends ObjectRef> Builder<T> newBuilder() {
@@ -20,6 +21,7 @@ public record LookupSuspectsImpl<T extends ObjectRef>(
     private String permission;
     private ObjectRef resource;
     private ObjectRefFactory<T> subjectType;
+    private String subjectRelation;
 
     @Override
     public Builder<T> permission(String permission) {
@@ -36,6 +38,12 @@ public record LookupSuspectsImpl<T extends ObjectRef>(
     @Override
     public Builder<T> subjectType(ObjectRefFactory<T> subjectType) {
       this.subjectType = subjectType;
+      return this;
+    }
+
+    @Override
+    public LookupSuspects.Builder<T> subjectRelation(String subjectRelation) {
+      this.subjectRelation = subjectRelation;
       return this;
     }
 

@@ -99,12 +99,15 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
   @Override
   public <T extends ObjectRef> Iterator<T> lookupSubjects(LookupSuspects<T> lookupSuspects) {
 
-    var request =
+    var requestBuilder =
         LookupSubjectsRequest.newBuilder()
             .setPermission(lookupSuspects.permission())
             .setSubjectObjectType(lookupSuspects.subjectType().kind())
-            .setResource(objectReferenceMapper.map(lookupSuspects.resource()))
-            .build();
+            .setResource(objectReferenceMapper.map(lookupSuspects.resource()));
+    if (lookupSuspects.subjectRelation() != null) {
+      requestBuilder.setOptionalSubjectRelation(lookupSuspects.subjectRelation());
+    }
+    var request = requestBuilder.build();
 
     try {
       var response = permissionsService.lookupSubjects(request);

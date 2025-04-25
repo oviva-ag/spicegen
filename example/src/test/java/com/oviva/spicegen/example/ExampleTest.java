@@ -147,6 +147,12 @@ class ExampleTest {
     assertEquals(2, userIds.size());
     assertTrue(userIds.contains(user.id()));
     assertTrue(userIds.contains(user2.id()));
+
+    // Example: find teams allowed to read the folder
+    Iterator<TeamRef> teamsAllowedToRead =
+        permissionService.lookupSubjects(folder.lookupReadTeamMember());
+    assertTrue(teamsAllowedToRead.hasNext());
+    assertEquals(team.id(), teamsAllowedToRead.next().id());
   }
 
   private String loadSchema() {

@@ -29,7 +29,7 @@ import com.squareup.javapoet.TypeSpec.Builder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 import javax.lang.model.element.Modifier;
 import org.slf4j.Logger;
@@ -318,20 +318,20 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
       var allowedObjectTypes =
           definition.relations().stream()
               .flatMap(relation -> relation.allowedObjects().stream())
-              .filter(objectTypeRef -> objectTypeRef.relationship() == null)
-              .map(ObjectTypeRef::typeName)
               .toList();
 
       var permissionName = TextUtils.toPascalCase(permission.name());
 
-      for (String allowedObjectType : allowedObjectTypes) {
+      for (var allowedObjectType : allowedObjectTypes) {
 
         // TODO magic ref
-        String refType = toPascalCase(allowedObjectType);
+        String refType = toPascalCase(allowedObjectType.typeName());
         var typeRefName = refType + "Ref";
 
         ClassName className = ClassName.bestGuess(typeRefName);
-        var lookupMethodName = "lookup" + permissionName + refType;
+        var relationshipName = Objects.requireNonNullElse(allowedObjectType.relationship(), "");
+        var lookupMethodName =
+            "lookup%s%s%s".formatted(permissionName, refType, toPascalCase(relationshipName));
 
         typeRefBuilder.addMethod(
             MethodSpec.methodBuilder(lookupMethodName)
@@ -339,11 +339,12 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
                 .returns(ParameterizedTypeName.get(ClassName.get(LookupSuspects.class), className))
                 .addCode(
                     """
-                  return LookupSuspects.<$T>newBuilder().resource(this).permission($S).subjectType(ObjectRefFactories.$L).build();
+                  return LookupSuspects.<$T>newBuilder().resource(this).permission($S).subjectType(ObjectRefFactories.$L).subjectRelation($S).build();
                 """,
                     className,
                     permission.name(),
-                    className.simpleName().toUpperCase())
+                    className.simpleName().toUpperCase(),
+                    allowedObjectType.relationship())
                 .build());
       }
     }
