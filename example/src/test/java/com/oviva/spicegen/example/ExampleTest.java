@@ -1,12 +1,19 @@
 package com.oviva.spicegen.example;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.authzed.api.v1.SchemaServiceGrpc;
 import com.authzed.api.v1.WriteSchemaRequest;
 import com.authzed.grpcutil.BearerToken;
-import com.oviva.spicegen.api.*;
+import com.oviva.spicegen.api.CheckBulkPermissions;
+import com.oviva.spicegen.api.Consistency;
+import com.oviva.spicegen.api.PermissionService;
+import com.oviva.spicegen.api.SubjectRef;
+import com.oviva.spicegen.api.UpdateRelationships;
 import com.oviva.spicegen.permissions.refs.DocumentRef;
 import com.oviva.spicegen.permissions.refs.FolderRef;
 import com.oviva.spicegen.permissions.refs.TeamRef;
@@ -16,6 +23,10 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -126,6 +137,24 @@ class ExampleTest {
     assertEquals(2, checkPermissions.size());
     assertTrue(checkPermissions.get(0).permissionGranted());
     assertFalse(checkPermissions.get(1).permissionGranted());
+    Iterator<UserRef> usersAllowedToRead =
+        permissionService.lookupSubjects(document.lookupSubjectsReadUser());
+    assertTrue(usersAllowedToRead.hasNext());
+    // usersAllowedToRead contains both userId and user2
+    var userIds =
+        StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(usersAllowedToRead, Spliterator.ORDERED), false)
+            .map(UserRef::id)
+            .toList();
+    assertEquals(2, userIds.size());
+    assertTrue(userIds.contains(user.id()));
+    assertTrue(userIds.contains(userInTeam.id()));
+
+    // Example: find teams allowed to read the folder
+    Iterator<TeamRef> teamsAllowedToRead =
+        permissionService.lookupSubjects(folder.lookupSubjectsReadTeamMember());
+    assertTrue(teamsAllowedToRead.hasNext());
+    assertEquals(team.id(), teamsAllowedToRead.next().id());
   }
 
   private String loadSchema() {
