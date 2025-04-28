@@ -1,6 +1,7 @@
 package com.oviva.spicegen.example;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -8,6 +9,7 @@ import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.authzed.api.v1.SchemaServiceGrpc;
 import com.authzed.api.v1.WriteSchemaRequest;
 import com.authzed.grpcutil.BearerToken;
+import com.oviva.spicegen.api.CheckBulkPermissions;
 import com.oviva.spicegen.api.Consistency;
 import com.oviva.spicegen.api.PermissionService;
 import com.oviva.spicegen.api.SubjectRef;
@@ -146,7 +148,7 @@ class ExampleTest {
             .toList();
     assertEquals(2, userIds.size());
     assertTrue(userIds.contains(user.id()));
-    assertTrue(userIds.contains(user2.id()));
+    assertTrue(userIds.contains(userInTeam.id()));
 
     // Example: find teams allowed to read the folder
     Iterator<TeamRef> teamsAllowedToRead =

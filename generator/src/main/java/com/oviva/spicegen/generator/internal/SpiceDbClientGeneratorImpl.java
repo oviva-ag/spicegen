@@ -2,6 +2,7 @@ package com.oviva.spicegen.generator.internal;
 
 import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
 
+import com.oviva.spicegen.api.CheckBulkPermissionItem;
 import com.oviva.spicegen.api.CheckPermission;
 import com.oviva.spicegen.api.Consistency;
 import com.oviva.spicegen.api.LookupSuspects;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
 
+  private static final String REFS_PACKAGE = ".refs";
   private static Logger logger = LoggerFactory.getLogger(SpiceDbClientGeneratorImpl.class);
   private final TypeName objectRefTypeName = ClassName.get(ObjectRef.class);
   private final TypeName updateRelationshipTypeName = ClassName.get(UpdateRelationship.class);
@@ -193,13 +195,13 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
       addLookupMethods(typedRefBuilder, definition);
 
       typedRef = typedRefBuilder.build();
-      writeSource(typedRef, ".refs");
+      writeSource(typedRef, REFS_PACKAGE);
       createFactoryInstance(ClassName.bestGuess(className), factories);
     }
 
     TypeSpec factoriesClass = factories.build();
 
-    writeSource(factoriesClass, ".refs");
+    writeSource(factoriesClass, REFS_PACKAGE);
   }
 
   private static void createFactoryInstance(ClassName ref, Builder factories) {
@@ -374,7 +376,8 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
         typeRefBuilder.addMethod(
             MethodSpec.methodBuilder(createMethod)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(ClassName.get(options.packageName() + ".refs", typeRefName), "ref")
+                .addParameter(
+                    ClassName.get(options.packageName() + REFS_PACKAGE, typeRefName), "ref")
                 .returns(updateRelationshipTypeName)
                 .addCode(
                     """
@@ -401,7 +404,8 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
         typeRefBuilder.addMethod(
             MethodSpec.methodBuilder(deleteMethod)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(ClassName.get(options.packageName() + ".refs", typeRefName), "ref")
+                .addParameter(
+                    ClassName.get(options.packageName() + REFS_PACKAGE, typeRefName), "ref")
                 .returns(ClassName.bestGuess("UpdateRelationship"))
                 .addCode(
                     """
