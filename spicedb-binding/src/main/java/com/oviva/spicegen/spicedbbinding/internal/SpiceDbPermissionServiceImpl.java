@@ -97,15 +97,15 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
   }
 
   @Override
-  public <T extends ObjectRef> Iterator<T> lookupSubjects(LookupSuspects<T> lookupSuspects) {
+  public <T extends ObjectRef> Iterator<T> lookupSubjects(LookupSubjects<T> lookupSubjects) {
 
     var requestBuilder =
         LookupSubjectsRequest.newBuilder()
-            .setPermission(lookupSuspects.permission())
-            .setSubjectObjectType(lookupSuspects.subjectType().kind())
-            .setResource(objectReferenceMapper.map(lookupSuspects.resource()));
-    if (lookupSuspects.subjectRelation() != null) {
-      requestBuilder.setOptionalSubjectRelation(lookupSuspects.subjectRelation());
+            .setPermission(lookupSubjects.permission())
+            .setSubjectObjectType(lookupSubjects.subjectType().kind())
+            .setResource(objectReferenceMapper.map(lookupSubjects.resource()));
+    if (lookupSubjects.subjectRelation() != null) {
+      requestBuilder.setOptionalSubjectRelation(lookupSubjects.subjectRelation());
     }
     var request = requestBuilder.build();
 
@@ -115,7 +115,7 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
               Spliterators.spliteratorUnknownSize(response, Spliterator.ORDERED), false)
           .map(
               lookupSubjectsResponse ->
-                  lookupSuspects
+                  lookupSubjects
                       .subjectType()
                       .create(lookupSubjectsResponse.getSubject().getSubjectObjectId()))
           .iterator();

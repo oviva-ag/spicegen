@@ -1,8 +1,8 @@
 package com.oviva.spicegen.api;
 
-import com.oviva.spicegen.api.internal.LookupSuspectsImpl;
+import com.oviva.spicegen.api.internal.LookupSubjectsImpl;
 
-public interface LookupSuspects<T extends ObjectRef> {
+public interface LookupSubjects<T extends ObjectRef> {
 
   String permission();
 
@@ -13,7 +13,7 @@ public interface LookupSuspects<T extends ObjectRef> {
   String subjectRelation();
 
   static <T extends ObjectRef> Builder<T> newBuilder() {
-    return LookupSuspectsImpl.newBuilder();
+    return LookupSubjectsImpl.newBuilder();
   }
 
   interface Builder<T extends ObjectRef> {
@@ -25,6 +25,6 @@ public interface LookupSuspects<T extends ObjectRef> {
 
     Builder<T> subjectRelation(String subjectRelation);
 
-    LookupSuspects<T> build();
+    LookupSubjects<T> build();
   }
 }

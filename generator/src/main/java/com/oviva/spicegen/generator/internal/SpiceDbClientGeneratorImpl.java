@@ -5,7 +5,7 @@ import static com.oviva.spicegen.generator.utils.TextUtils.toPascalCase;
 import com.oviva.spicegen.api.CheckBulkPermissionItem;
 import com.oviva.spicegen.api.CheckPermission;
 import com.oviva.spicegen.api.Consistency;
-import com.oviva.spicegen.api.LookupSuspects;
+import com.oviva.spicegen.api.LookupSubjects;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.ObjectRefFactory;
 import com.oviva.spicegen.api.SubjectRef;
@@ -339,10 +339,10 @@ public class SpiceDbClientGeneratorImpl implements SpiceDbClientGenerator {
         typeRefBuilder.addMethod(
             MethodSpec.methodBuilder(lookupSubjectsMethodName)
                 .addModifiers(Modifier.PUBLIC)
-                .returns(ParameterizedTypeName.get(ClassName.get(LookupSuspects.class), className))
+                .returns(ParameterizedTypeName.get(ClassName.get(LookupSubjects.class), className))
                 .addCode(
                     """
-                  return LookupSuspects.<$T>newBuilder().resource(this).permission($S).subjectType(ObjectRefFactories.$L).subjectRelation($S).build();
+                  return LookupSubjects.<$T>newBuilder().resource(this).permission($S).subjectType(ObjectRefFactories.$L).subjectRelation($S).build();
                 """,
                     className,
                     permission.name(),

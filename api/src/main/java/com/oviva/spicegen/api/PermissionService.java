@@ -47,9 +47,9 @@ public interface PermissionService {
    *   <li>List all users that can modify a resource
    * </ul>
    *
-   * @param lookupSuspects the request containing resource, permission and subject type details
+   * @param lookupSubjects the request containing resource, permission and subject type details
    * @return an iterator over the subjects (users/teams etc) that have the specified permission on
    *     the given resource
    */
-  <T extends ObjectRef> Iterator<T> lookupSubjects(LookupSuspects<T> lookupSuspects);
+  <T extends ObjectRef> Iterator<T> lookupSubjects(LookupSubjects<T> lookupSubjects);
 }

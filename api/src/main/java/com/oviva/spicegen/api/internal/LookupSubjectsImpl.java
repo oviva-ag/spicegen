@@ -1,15 +1,14 @@
 package com.oviva.spicegen.api.internal;
 
-import com.oviva.spicegen.api.LookupSuspects;
-import com.oviva.spicegen.api.LookupSuspects.Builder;
+import com.oviva.spicegen.api.LookupSubjects;
 import com.oviva.spicegen.api.ObjectRef;
 import com.oviva.spicegen.api.ObjectRefFactory;
 
-public record LookupSuspectsImpl<T extends ObjectRef>(
+public record LookupSubjectsImpl<T extends ObjectRef>(
     String permission, ObjectRef resource, ObjectRefFactory<T> subjectType, String subjectRelation)
-    implements LookupSuspects<T> {
+    implements LookupSubjects<T> {
 
-  private LookupSuspectsImpl(Builder<T> builder) {
+  private LookupSubjectsImpl(Builder<T> builder) {
     this(builder.permission, builder.resource, builder.subjectType, builder.subjectRelation);
   }
 
@@ -17,7 +16,7 @@ public record LookupSuspectsImpl<T extends ObjectRef>(
     return new Builder<>();
   }
 
-  public static final class Builder<T extends ObjectRef> implements LookupSuspects.Builder<T> {
+  public static final class Builder<T extends ObjectRef> implements LookupSubjects.Builder<T> {
     private String permission;
     private ObjectRef resource;
     private ObjectRefFactory<T> subjectType;
@@ -42,17 +41,17 @@ public record LookupSuspectsImpl<T extends ObjectRef>(
     }
 
     @Override
-    public LookupSuspects.Builder<T> subjectRelation(String subjectRelation) {
+    public LookupSubjects.Builder<T> subjectRelation(String subjectRelation) {
       this.subjectRelation = subjectRelation;
       return this;
     }
 
     @Override
-    public LookupSuspects<T> build() {
+    public LookupSubjects<T> build() {
       if (permission == null || resource == null || subjectType == null) {
         throw new IllegalStateException("Permission, resource, and subjectType must be set");
       }
-      return new LookupSuspectsImpl<>(this);
+      return new LookupSubjectsImpl<>(this);
     }
   }
 }
