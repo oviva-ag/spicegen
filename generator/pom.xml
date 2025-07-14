@@ -8,6 +8,7 @@
   </parent>
 
   <artifactId>generator</artifactId>
+  <name>Spicegen Generator</name>
 
   <dependencyManagement>
     <dependencies>
