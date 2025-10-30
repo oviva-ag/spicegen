@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.authzed.api.v1.*;
 import com.oviva.spicegen.api.*;
 import com.oviva.spicegen.api.Consistency;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 
 class SpiceDbPermissionServiceImplTest {
@@ -16,7 +17,7 @@ class SpiceDbPermissionServiceImplTest {
   void updateRelationships() {
 
     var stub = mock(PermissionsServiceGrpc.PermissionsServiceBlockingStub.class);
-    var sut = new SpiceDbPermissionServiceImpl(stub);
+    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(5), Duration.ofSeconds(3));
 
     var o = ObjectRef.of("file", "/test.txt");
     var s = ObjectRef.of("user", "bob");
@@ -28,6 +29,7 @@ class SpiceDbPermissionServiceImplTest {
         WriteRelationshipsResponse.newBuilder()
             .setWrittenAt(ZedToken.newBuilder().setToken(token).build())
             .build();
+    when(stub.withDeadlineAfter(any(Duration.class))).thenReturn(stub);
     when(stub.writeRelationships(any())).thenReturn(res);
 
     // when
@@ -41,7 +43,7 @@ class SpiceDbPermissionServiceImplTest {
   void checkPermission() {
 
     var stub = mock(PermissionsServiceGrpc.PermissionsServiceBlockingStub.class);
-    var sut = new SpiceDbPermissionServiceImpl(stub);
+    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(5), Duration.ofSeconds(3));
 
     var permission = "write";
     var consistency = Consistency.fullyConsistent();
@@ -53,6 +55,7 @@ class SpiceDbPermissionServiceImplTest {
         CheckPermissionResponse.newBuilder()
             .setPermissionship(CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION)
             .build();
+    when(stub.withDeadlineAfter(any(Duration.class))).thenReturn(stub);
     when(stub.checkPermission(any())).thenReturn(res);
 
     // when
@@ -73,7 +76,7 @@ class SpiceDbPermissionServiceImplTest {
   void checkBulkPermissions() {
 
     var stub = mock(PermissionsServiceGrpc.PermissionsServiceBlockingStub.class);
-    var sut = new SpiceDbPermissionServiceImpl(stub);
+    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(5), Duration.ofSeconds(3));
 
     var permission1 = "read";
     var permission2 = "write";
@@ -98,6 +101,7 @@ class SpiceDbPermissionServiceImplTest {
                                 CheckPermissionResponse.Permissionship
                                     .PERMISSIONSHIP_NO_PERMISSION)))
             .build();
+    when(stub.withDeadlineAfter(any(Duration.class))).thenReturn(stub);
     when(stub.checkBulkPermissions(any())).thenReturn(res);
 
     // when

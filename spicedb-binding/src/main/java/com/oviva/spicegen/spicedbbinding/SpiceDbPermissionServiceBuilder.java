@@ -3,9 +3,12 @@ package com.oviva.spicegen.spicedbbinding;
 import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.oviva.spicegen.api.PermissionService;
 import com.oviva.spicegen.spicedbbinding.internal.SpiceDbPermissionServiceImpl;
+import java.time.Duration;
 
 public class SpiceDbPermissionServiceBuilder {
   private PermissionsServiceGrpc.PermissionsServiceBlockingStub stub;
+  private Duration writeDeadline;
+  private Duration checkDeadline;
 
   public static SpiceDbPermissionServiceBuilder newBuilder() {
     return new SpiceDbPermissionServiceBuilder();
@@ -19,7 +22,17 @@ public class SpiceDbPermissionServiceBuilder {
     return this;
   }
 
+  public SpiceDbPermissionServiceBuilder writeDeadline(Duration writeDeadline) {
+    this.writeDeadline = writeDeadline;
+    return this;
+  }
+
+  public SpiceDbPermissionServiceBuilder checkDeadline(Duration checkDeadline) {
+    this.checkDeadline = checkDeadline;
+    return this;
+  }
+
   public PermissionService build() {
-    return new SpiceDbPermissionServiceImpl(stub);
+    return new SpiceDbPermissionServiceImpl(stub, writeDeadline, checkDeadline);
   }
 }

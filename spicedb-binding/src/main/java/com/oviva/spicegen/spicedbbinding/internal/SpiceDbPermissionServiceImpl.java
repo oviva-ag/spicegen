@@ -5,6 +5,7 @@ import com.oviva.spicegen.api.*;
 import com.oviva.spicegen.api.PermissionService;
 import com.oviva.spicegen.api.exceptions.ClientException;
 import io.grpc.StatusRuntimeException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,16 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
 
   private final GrpcExceptionMapper exceptionMapper = new GrpcExceptionMapper();
 
+  private final Duration writeDeadline;
+  private final Duration checkDeadline;
+
   public SpiceDbPermissionServiceImpl(
-      PermissionsServiceGrpc.PermissionsServiceBlockingStub permissionsService) {
+      PermissionsServiceGrpc.PermissionsServiceBlockingStub permissionsService,
+      Duration writeDeadline,
+      Duration checkDeadline) {
     this.permissionsService = permissionsService;
+    this.writeDeadline = writeDeadline;
+    this.checkDeadline = checkDeadline;
   }
 
   @Override
@@ -45,7 +53,7 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
             .build();
 
     try {
-      var res = permissionsService.writeRelationships(req);
+      var res = permissionsService.withDeadlineAfter(writeDeadline).writeRelationships(req);
       var zedToken = res.getWrittenAt().getToken();
       return new UpdateResultImpl(zedToken);
     } catch (StatusRuntimeException e) {
@@ -59,7 +67,7 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
     var request = checkPermissionMapper.map(checkPermission);
 
     try {
-      var response = permissionsService.checkPermission(request);
+      var response = permissionsService.withDeadlineAfter(checkDeadline).checkPermission(request);
       return response.getPermissionship()
           == CheckPermissionResponse.Permissionship.PERMISSIONSHIP_HAS_PERMISSION;
     } catch (StatusRuntimeException e) {
@@ -73,7 +81,8 @@ public class SpiceDbPermissionServiceImpl implements PermissionService {
     var request = checkPermissionMapper.mapBulk(checkBulkPermissions);
 
     try {
-      var response = permissionsService.checkBulkPermissions(request);
+      var response =
+          permissionsService.withDeadlineAfter(checkDeadline).checkBulkPermissions(request);
       if (response.getPairsCount() != checkBulkPermissions.items().size()) {
         throw new ClientException("Amount of response pairs does not match request");
       }

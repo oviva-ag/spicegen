@@ -6,6 +6,7 @@ import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.authzed.grpcutil.BearerToken;
 import com.oviva.spicegen.api.PermissionService;
 import io.grpc.ManagedChannelBuilder;
+import java.time.Duration;
 import org.junit.Test;
 
 public class SpiceDbPermissionServiceBuilderTest {
@@ -25,6 +26,8 @@ public class SpiceDbPermissionServiceBuilderTest {
     var svc =
         SpiceDbPermissionServiceBuilder.newBuilder()
             .permissionsBlockingStub(permissionsService)
+            .writeDeadline(Duration.ofSeconds(5))
+            .checkDeadline(Duration.ofSeconds(3))
             .build();
 
     assertInstanceOf(PermissionService.class, svc);
