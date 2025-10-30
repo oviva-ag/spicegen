@@ -7,8 +7,8 @@ import java.time.Duration;
 
 public class SpiceDbPermissionServiceBuilder {
   private PermissionsServiceGrpc.PermissionsServiceBlockingStub stub;
-  private Duration writeDeadline;
-  private Duration checkDeadline;
+  private Duration writeDeadline = Duration.ofSeconds(3);
+  private Duration checkDeadline = Duration.ofSeconds(3);
 
   public static SpiceDbPermissionServiceBuilder newBuilder() {
     return new SpiceDbPermissionServiceBuilder();
