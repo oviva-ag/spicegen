@@ -7,7 +7,7 @@ import java.time.Duration;
 
 public class SpiceDbPermissionServiceBuilder {
   private PermissionsServiceGrpc.PermissionsServiceBlockingStub stub;
-  private Duration deadline = Duration.ofSeconds(3);
+  private Duration requestTimeout = Duration.ofSeconds(3);
 
   public static SpiceDbPermissionServiceBuilder newBuilder() {
     return new SpiceDbPermissionServiceBuilder();
@@ -21,12 +21,12 @@ public class SpiceDbPermissionServiceBuilder {
     return this;
   }
 
-  public SpiceDbPermissionServiceBuilder deadline(Duration deadline) {
-    this.deadline = deadline;
+  public SpiceDbPermissionServiceBuilder requestTimeout(Duration requestTimeout) {
+    this.requestTimeout = requestTimeout;
     return this;
   }
 
   public PermissionService build() {
-    return new SpiceDbPermissionServiceImpl(stub, deadline);
+    return new SpiceDbPermissionServiceImpl(stub, requestTimeout);
   }
 }
