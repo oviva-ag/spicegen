@@ -26,8 +26,7 @@ public class SpiceDbPermissionServiceBuilderTest {
     var svc =
         SpiceDbPermissionServiceBuilder.newBuilder()
             .permissionsBlockingStub(permissionsService)
-            .writeDeadline(Duration.ofSeconds(5))
-            .checkDeadline(Duration.ofSeconds(3))
+            .deadline(Duration.ofSeconds(3))
             .build();
 
     assertInstanceOf(PermissionService.class, svc);

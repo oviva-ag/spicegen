@@ -17,7 +17,7 @@ class SpiceDbPermissionServiceImplTest {
   void updateRelationships() {
 
     var stub = mock(PermissionsServiceGrpc.PermissionsServiceBlockingStub.class);
-    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(5), Duration.ofSeconds(3));
+    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(3));
 
     var o = ObjectRef.of("file", "/test.txt");
     var s = ObjectRef.of("user", "bob");
@@ -43,7 +43,7 @@ class SpiceDbPermissionServiceImplTest {
   void checkPermission() {
 
     var stub = mock(PermissionsServiceGrpc.PermissionsServiceBlockingStub.class);
-    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(5), Duration.ofSeconds(3));
+    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(3));
 
     var permission = "write";
     var consistency = Consistency.fullyConsistent();
@@ -76,7 +76,7 @@ class SpiceDbPermissionServiceImplTest {
   void checkBulkPermissions() {
 
     var stub = mock(PermissionsServiceGrpc.PermissionsServiceBlockingStub.class);
-    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(5), Duration.ofSeconds(3));
+    var sut = new SpiceDbPermissionServiceImpl(stub, Duration.ofSeconds(3));
 
     var permission1 = "read";
     var permission2 = "write";
