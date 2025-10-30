@@ -4,7 +4,6 @@ import com.authzed.api.v1.PermissionsServiceGrpc;
 import com.oviva.spicegen.api.PermissionService;
 import com.oviva.spicegen.spicedbbinding.internal.SpiceDbPermissionServiceImpl;
 import java.time.Duration;
-import java.util.Objects;
 
 public class SpiceDbPermissionServiceBuilder {
   private PermissionsServiceGrpc.PermissionsServiceBlockingStub stub;
