@@ -12,7 +12,7 @@ jobs:
       id-token: 'write'
     steps:
       - id: 'notify_google_chat'
-        uses: 'google-github-actions/send-google-chat-webhook@b23ff838dd1933c82cc98b96af128c937ae394cd' # v0.0.2
+        uses: 'google-github-actions/send-google-chat-webhook@v0.0.2'
         with:
           webhook_url: '${{ secrets.GOOGLE_CHAT_GAIA_SUPPORT_CHANNEL }}'
           mention: "<users/all>"
