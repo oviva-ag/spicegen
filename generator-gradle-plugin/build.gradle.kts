@@ -22,7 +22,7 @@ dependencies {
     implementation("com.oviva.spicegen:generator:1.0.0-SNAPSHOT")
     implementation("org.slf4j:slf4j-api:1.7.36")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.12.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
 }
 
 gradlePlugin {
