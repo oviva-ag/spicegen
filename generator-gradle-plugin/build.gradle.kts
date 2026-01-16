@@ -16,8 +16,8 @@ java {
 }
 
 repositories {
+    mavenLocal() // Must be first for CI to find freshly-built Maven artifacts
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {

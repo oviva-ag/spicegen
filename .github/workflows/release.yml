@@ -26,6 +26,8 @@ jobs:
         uses: goreleaser/goreleaser-action@v5
         with:
           install-only: true
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
       - name: Get version
         id: version
         run: |
@@ -46,7 +48,7 @@ jobs:
       - name: Publish Maven modules
         run: |
           echo -n "$MAVEN_GPG_KEY" | gpg --import --batch
-          mvn --batch-mode -Prelease deploy
+          mvn --batch-mode -Prelease install deploy
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
