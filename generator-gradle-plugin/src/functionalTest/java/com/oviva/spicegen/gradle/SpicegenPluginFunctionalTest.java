@@ -36,7 +36,7 @@ class SpicegenPluginFunctionalTest {
         """
             plugins {
                 java
-                id("com.oviva.spicegen")
+                id("io.github.gernot-ohner.spicegen")
             }
 
             group = "com.example"
@@ -95,7 +95,7 @@ class SpicegenPluginFunctionalTest {
         """
             plugins {
                 java
-                id("com.oviva.spicegen")
+                id("io.github.gernot-ohner.spicegen")
             }
 
             group = "com.example"
@@ -154,7 +154,7 @@ class SpicegenPluginFunctionalTest {
         """
             plugins {
                 java
-                id("com.oviva.spicegen")
+                id("io.github.gernot-ohner.spicegen")
             }
 
             repositories {
@@ -196,7 +196,7 @@ class SpicegenPluginFunctionalTest {
         """
             plugins {
                 java
-                id("com.oviva.spicegen")
+                id("io.github.gernot-ohner.spicegen")
             }
 
             group = "com.example"
