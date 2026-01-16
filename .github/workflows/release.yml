@@ -43,7 +43,7 @@ jobs:
       - name: Make AST preprocessor
         working-directory: parser
         run: make build
-      - name: Publish package
+      - name: Publish Maven modules
         run: |
           echo -n "$MAVEN_GPG_KEY" | gpg --import --batch
           mvn --batch-mode -Prelease deploy
@@ -52,6 +52,15 @@ jobs:
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+      - name: Publish Gradle plugin
+        working-directory: generator-gradle-plugin
+        run: ./gradlew publishAllPublicationsToMavenCentralRepository
+        env:
+          VERSION: ${{ env.VERSION }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.MAVEN_GPG_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
