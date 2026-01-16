@@ -48,7 +48,7 @@ jobs:
       - name: Publish Maven modules
         run: |
           echo -n "$MAVEN_GPG_KEY" | gpg --import --batch
-          mvn --batch-mode -Prelease install deploy
+          mvn --batch-mode -Prelease deploy
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
