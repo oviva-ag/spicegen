@@ -6,7 +6,7 @@ plugins {
 // Dynamic version from CI
 val releaseVersion: String = System.getenv("VERSION") ?: "1.0.0-SNAPSHOT"
 
-group = "io.github.gernot-ohner"
+group = "com.oviva.spicegen"
 version = releaseVersion
 
 java {
@@ -29,11 +29,11 @@ dependencies {
 }
 
 gradlePlugin {
-    website.set("https://github.com/gernot-ohner/spicegen")
-    vcsUrl.set("https://github.com/gernot-ohner/spicegen")
+    website.set("https://github.com/oviva-ag/spicegen")
+    vcsUrl.set("https://github.com/oviva-ag/spicegen")
     plugins {
         create("spicegen") {
-            id = "io.github.gernot-ohner.spicegen"
+            id = "com.oviva.spicegen"
             displayName = "SpiceDB Code Generator"
             description = "Generates type-safe Java clients for SpiceDB from .zed schema files"
             implementationClass = "com.oviva.spicegen.gradle.SpicegenPlugin"
@@ -67,12 +67,12 @@ mavenPublishing {
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates("io.github.gernot-ohner", "spicegen-gradle-plugin", releaseVersion)
+    coordinates("com.oviva.spicegen", "spicegen-gradle-plugin", releaseVersion)
 
     pom {
         name.set("SpiceGen Gradle Plugin")
         description.set("Gradle plugin for generating type-safe Java clients for SpiceDB")
-        url.set("https://github.com/gernot-ohner/spicegen")
+        url.set("https://github.com/oviva-ag/spicegen")
 
         licenses {
             license {
@@ -82,13 +82,13 @@ mavenPublishing {
         }
         developers {
             developer {
-                id.set("gernot-ohner")
-                name.set("Gernot Ohner")
+                id.set("trichner")
+                name.set("Thomas Richner")
             }
         }
         scm {
-            connection.set("scm:git:https://github.com/gernot-ohner/spicegen.git")
-            url.set("https://github.com/gernot-ohner/spicegen")
+            connection.set("scm:git:https://github.com/oviva-ag/spicegen.git")
+            url.set("https://github.com/oviva-ag/spicegen")
         }
     }
 }
