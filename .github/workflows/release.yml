@@ -45,10 +45,10 @@ jobs:
       - name: Make AST preprocessor
         working-directory: parser
         run: make build
-      - name: Publish Maven modules
+      - name: Build and install Maven modules
         run: |
           echo -n "$MAVEN_GPG_KEY" | gpg --import --batch
-          mvn --batch-mode -Prelease deploy
+          mvn --batch-mode -Prelease install -DskipRemoteStaging=true
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_KEY }}
