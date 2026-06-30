@@ -53,6 +53,14 @@ class GrpcExceptionMapperTest {
   }
 
   @Test
+  void test_map_deadlineExceeded() {
+    var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.DEADLINE_EXCEEDED));
+
+    assertInstanceOf(UpstreamTimeoutException.class, exception);
+    assertEquals("upstream timeout", exception.getMessage());
+  }
+
+  @Test
   void test_map_unexpectedValue() {
     var exception = grpcExceptionMapper.map(new StatusRuntimeException(Status.CANCELLED));
 
