@@ -11,7 +11,7 @@ public class GrpcExceptionMapper {
       case ALREADY_EXISTS -> new ConflictException("already exists", e);
       case INVALID_ARGUMENT -> new ValidationException("invalid argument", e);
       case FAILED_PRECONDITION -> new ValidationException("failed precondition", e);
-      case DEADLINE_EXCEEDED -> new UpstreamTimeoutException("upstream timeout", e);
+      case DEADLINE_EXCEEDED -> new UpstreamTimeoutException("deadline exceeded", e);
       default -> new ClientException("unexpected status: " + e.getStatus(), e);
     };
   }
