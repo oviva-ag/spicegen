@@ -16,12 +16,14 @@ This is a Java generator for SpiceDB schemas which generates:
 
 ## Getting Started
 
-**Prerequistes:**
+**Prerequisites:**
 
 - [GitHub packages for Maven](https://docs.github.com/de/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry)
 
-1. Add the  `com.oviva.spicegen:api` dependency
-2. Add the  `com.oviva.spicegen:spicegen-maven-plugin` plugin
+### Maven
+
+1. Add the `com.oviva.spicegen:api` dependency
+2. Add the `com.oviva.spicegen:spicegen-maven-plugin` plugin
 
 Example `pom.xml`
 
@@ -56,6 +58,33 @@ Example `pom.xml`
 </plugins>
 ```
 
+### Gradle
+
+1. Add the `com.oviva.spicegen:api` dependency
+2. Apply the `com.oviva.spicegen` plugin
+
+Example `build.gradle.kts`
+
+```kotlin
+plugins {
+    java
+    id("com.oviva.spicegen") version "$spicegenVersion"
+}
+
+dependencies {
+    implementation("com.oviva.spicegen:api:$spicegenVersion")
+}
+
+// Optional: customize the defaults
+spicegen {
+    schemaFile.set(file("src/main/resources/schema.zed"))
+    packageName.set("com.example.permissions")
+    outputDirectory.set(layout.buildDirectory.dir("generated/sources/spicegen/java/main"))
+}
+```
+
+The `generateSpiceDbSources` task runs automatically before `compileJava`.
+
 ## Implementation Overview
 
 ```mermaid
@@ -72,7 +101,32 @@ The generator work in multiple stages that could be re-used for other generators
    into a nice model. See [model](./model).
 3. The schema model is transformed into Java sources. See [generator](./generator)
 
-To make this easy to use, all the above is bundled in the [maven plugin](./generator-maven-plugin).
+To make this easy to use, all the above is bundled in the [Maven plugin](./generator-maven-plugin) and [Gradle plugin](./generator-gradle-plugin).
+
+## Development
+
+### Building
+
+```bash
+# Build Maven modules
+mvn install
+
+# Build and test Gradle plugin
+cd generator-gradle-plugin
+./gradlew build
+```
+
+### IDE Setup (IntelliJ IDEA)
+
+The project is primarily a Maven multi-module project. The Gradle plugin (`generator-gradle-plugin`) is a standalone Gradle project because Gradle plugins require Gradle's toolchain to build.
+
+To work with the Gradle plugin in IntelliJ:
+
+1. Open the project as a Maven project (the root `pom.xml`)
+2. Right-click on `generator-gradle-plugin/build.gradle.kts`
+3. Select **"Link Gradle Project"**
+
+IntelliJ will then recognize both the Maven modules and the Gradle plugin.
 
 ## Useful Links
 
